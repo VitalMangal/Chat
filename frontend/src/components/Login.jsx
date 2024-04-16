@@ -9,12 +9,12 @@ const formSchema = Yup.object().shape({
 });
 
 const LoginForm = () => {
-
+	console.log('дошло до формы');
   return (
 		<Formik
 		  initialValues={{
       	username: '',
-      	email: '',
+      	password: '',
     	}}
 			validationSchema={formSchema}
       onSubmit={ (values) => {
@@ -27,13 +27,13 @@ const LoginForm = () => {
 					<div className="form-floating mb-3">
 						<label htmlFor="username">Ваш ник</label>
 						<Field
-						id="username"
-						name="username"
-						type="text"
-						autocomplete="username"
-						required=""
-						placeholder="Ваш ник"
-						className="form-control"
+							id="username"
+							name="username"
+							type="text"
+							autocomplete="username"
+							required=""
+							placeholder="Ваш ник"
+							className="form-control"
 						/>
 						{errors.username && touched.username ? (
 							<div>{errors.username}</div>
@@ -50,6 +50,9 @@ const LoginForm = () => {
 							placeholder="Пароль"
 							className="form-control"
 						/>
+						{errors.password && touched.password ? (
+							<div>{errors.password}</div>
+						) : null}
 					</div>
       		<button type="submit" className="w-100 mb-3 btn btn-outline-primary">Войти</button>
     		</Form>
@@ -68,8 +71,7 @@ const Login = () => {
 								<div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
 									<img src={logo} className="rounded-circle" alt="Войти" />
 								</div>
-								{console.log('дошло до формы')}
-								{LoginForm}
+								<LoginForm />
 							</div>
 							<div className="card-footer p-4">
 								<div className="text-center">
