@@ -20,7 +20,6 @@
   },
   "homepage": "https://github.com/VitalMangal/frontend-project-12#readme",
   "dependencies": {
-    "@hexlet/chat-server": "^2.0.3",
-    "formik": "^2.4.5"
+    "@hexlet/chat-server": "^2.0.3"
   }
 }
