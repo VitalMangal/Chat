@@ -1,7 +1,8 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import Login from './components/Login';
 import MainPage from './components/MainPage';
-import PageNotFound from './components/PageNotFound'
+import PageNotFound from './components/PageNotFound';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 function App() {
   return (
