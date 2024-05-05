@@ -18,7 +18,7 @@ import {
 import React, { useContext } from 'react';
 import { Button, Navbar, Nav } from 'react-bootstrap';
 
-
+// Задваивается проверка: тут и в MainPage на токен
 const PrivateRoute = ({ children }) => {
   const auth = useContext(authContext);
   const location = useLocation();

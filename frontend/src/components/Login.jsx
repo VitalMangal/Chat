@@ -35,16 +35,13 @@ const LoginForm = () => {
       setAuthFailed(false);
 
       try {
-        console.log(values);
-				setAuthFailed(false);
+        setAuthFailed(false);
 				const res = await axios.post(routes.loginPath(), values);
-				console.log(res, 'res');
-				localStorage.setItem('userId', JSON.stringify(res.data));
-        console.log(localStorage.getItem('userId'));
+				localStorage.setItem('userData', JSON.stringify(res.data));
 				auth.logIn();
 				navigate("/");
       } catch (err) {
-        console.log(err);
+        console.log(err, 'error');
         formik.setSubmitting(false);
         if (err.isAxiosError && err.response.status === 401) {
           setAuthFailed(true);
