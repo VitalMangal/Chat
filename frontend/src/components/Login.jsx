@@ -10,8 +10,8 @@ import authContext from '../context/AuthContext.js';
 import routes from '../routes.js';
 
 const formSchema = Yup.object().shape({
-	username: Yup.string().required('Обязательное поле'),
-	email: Yup.string().required('Обязательное поле').email('Неверный email'),
+	username: Yup.string().required('Обязательное поле').trim(),
+	password: Yup.string().required('Обязательное поле'),
 });
 
 const LoginForm = () => {
@@ -38,8 +38,9 @@ const LoginForm = () => {
         console.log(values);
 				setAuthFailed(false);
 				const res = await axios.post(routes.loginPath(), values);
-				console.log(res);
+				console.log(res, 'res');
 				localStorage.setItem('userId', JSON.stringify(res.data));
+        console.log(localStorage.getItem('userId'));
 				auth.logIn();
 				navigate("/");
       } catch (err) {
@@ -59,7 +60,6 @@ const LoginForm = () => {
     <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
       <h1 className="text-center mb-4">Войти</h1>
       <Form.Group className="form-floating mb-3">
-        <Form.Label htmlFor="username">Ваш ник</Form.Label>
         <Form.Control
           onChange={formik.handleChange}
           value={formik.values.username}
@@ -72,9 +72,9 @@ const LoginForm = () => {
           ref={inputRef}
           type="text"
         />
+        <Form.Label htmlFor="username">Ваш ник</Form.Label>
       </Form.Group>
       <Form.Group className="form-floating mb-4">
-        <Form.Label htmlFor="password" className="form-label">Пароль</Form.Label>
         <Form.Control
           onChange={formik.handleChange}
           value={formik.values.password}
@@ -86,7 +86,8 @@ const LoginForm = () => {
           placeholder="Пароль"
           isInvalid={authFailed}
         />
-        <Form.Control.Feedback type="invalid">Невнрное имя пользователя или пароль</Form.Control.Feedback>
+        <Form.Label htmlFor="password" className="form-label">Пароль</Form.Label>
+        <Form.Control.Feedback type="invalid">Неверное имя пользователя или пароль</Form.Control.Feedback>
       </Form.Group>
       <Button type="submit" variant="outline-primary" className="w-100 mb-3">Войти</Button>
     </Form>

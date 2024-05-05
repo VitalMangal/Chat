@@ -7,7 +7,6 @@ import AuthButton from './components/AuthButton';
 import AuthProvider from './context/AuthProvider.js';
 import authContext from './context/AuthContext.js';
 
-import 'bootstrap/dist/css/bootstrap.min.css';
 import {
   BrowserRouter,
   Routes,
