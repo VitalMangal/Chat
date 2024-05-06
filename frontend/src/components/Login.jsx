@@ -37,7 +37,9 @@ const LoginForm = () => {
       try {
         setAuthFailed(false);
 				const res = await axios.post(routes.loginPath(), values);
-				localStorage.setItem('userData', JSON.stringify(res.data));
+        const { data } = res;
+        data.userLoggedIn = true;
+				localStorage.setItem('userData', JSON.stringify(data));
 				auth.logIn();
 				navigate("/");
       } catch (err) {

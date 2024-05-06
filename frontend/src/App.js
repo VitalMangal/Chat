@@ -16,12 +16,11 @@ import {
   Link,
 } from 'react-router-dom';
 import React, { useContext } from 'react';
-import { Button, Navbar, Nav } from 'react-bootstrap';
+import { Navbar } from 'react-bootstrap';
 
-// Задваивается проверка: тут и в MainPage на токен
 const PrivateRoute = ({ children }) => {
-  const auth = useContext(authContext);
   const location = useLocation();
+  const auth = useContext(authContext);
 
   return (
     auth.loggedIn ? children : <Navigate to="/login" state={{ from: location }} />
@@ -55,3 +54,15 @@ function App() {
 }
 
 export default App;
+
+/*
+проверка на loggedIn:
+const PrivateRoute = ({ children }) => {
+  const auth = useContext(authContext);
+  const location = useLocation();
+
+  return (
+    auth.loggedIn ? children : <Navigate to="/login" state={{ from: location }} />
+  );
+};
+*/
