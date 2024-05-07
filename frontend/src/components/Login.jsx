@@ -3,8 +3,11 @@ import React, {useEffect, useRef, useState, useContext} from 'react';
 import { useFormik } from 'formik';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
 import * as Yup from 'yup';
+import _ from 'lodash';
 
+import { selectors, setUser, removeUser } from '../slices/userSlice.js';
 import logo from '../pictures/loginImg.jpeg';
 import authContext from '../context/AuthContext.js';
 import routes from '../routes.js';
@@ -15,6 +18,7 @@ const formSchema = Yup.object().shape({
 });
 
 const LoginForm = () => {
+  const dispatch = useDispatch();
   const auth = useContext(authContext);
 	const navigate = useNavigate();
 	const inputRef = useRef();
@@ -38,6 +42,10 @@ const LoginForm = () => {
         setAuthFailed(false);
 				const res = await axios.post(routes.loginPath(), values);
         const { data } = res;
+        // Здесь выводится предупреждение про Id
+        data.id = _.uniqueId();
+        dispatch(setUser(data));
+        console.log(data, 'data dispatch');
         data.userLoggedIn = true;
 				localStorage.setItem('userData', JSON.stringify(data));
 				auth.logIn();

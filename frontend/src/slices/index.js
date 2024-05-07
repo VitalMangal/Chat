@@ -1,9 +1,10 @@
 import { configureStore } from '@reduxjs/toolkit';
-import counterReducer from './counterSlice.js';
+import channelsReducer from './channelsSlice.js';
+import userReducer from './userSlice.js';
 
 export default configureStore({
   reducer: {
-    // Свойство counter будет внутри объекта общего состояния: state.counter
-    counter: counterReducer,
+    channels: channelsReducer,
+    user: userReducer,
   },
 });
