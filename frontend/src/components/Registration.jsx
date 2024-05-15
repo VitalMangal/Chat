@@ -1,28 +1,155 @@
-import React from 'react';
+import axios from 'axios';
+import React, {useEffect, useRef, useState, useContext} from 'react';
+import * as formik from 'formik';
+import { Button, Form } from 'react-bootstrap';
+import { useNavigate } from 'react-router-dom';
+import { useSelector, useDispatch } from 'react-redux';
+import * as yup from 'yup';
+import _ from 'lodash';
 
-const registrationFormSchema = yup.object().shape({
-  username: yup
-    .string()
-    .min(3, 'errors.rangeLetter')
-    .max(20, 'errors.rangeLetter')
-    .required('errors.required'),
-  password: yup
-    .string()
-    .min(6, 'errors.minLetter')
-    .required('errors.required'),
-  confirmPassword: yup
-    .string()
-    .oneOf([yup.ref('password'), null], 'errors.checkPassword')
-    .required('errors.required'),
-});
+import { selectors, setUser, removeUser } from '../slices/userSlice.js';
+import regLogo from '../pictures/RegImg.jpg';
+import authContext from '../context/AuthContext.js';
+import routes from '../routes.js';
 
-const registrationForm = () => {
+const RegistrationForm = () => {
+  const { Formik } = formik;
+  const dispatch = useDispatch();
+  const auth = useContext(authContext);
+	const navigate = useNavigate();
+	const inputRef = useRef();
+	const [authFailed, setAuthFailed] = useState(false);
+
+  const registrationFormSchema = yup.object().shape({
+    username: yup
+      .string()
+      .min(3, 'min3')
+      .max(20, 'max 20')
+      .required('required'),
+    password: yup
+      .string()
+      .min(6, 'min 6')
+      .required('required'),
+    confirmPassword: yup
+      .string()
+      .oneOf([yup.ref('password'), null], 'checkPassword')
+      .required('required'),
+  });
 
   useEffect(() => {
     inputRef.current.focus();
   }, []);
 
-	const formik = useFormik({
+  const regSubmit = async (values) => {
+    console.log('submit registration');
+
+    setAuthFailed(false);
+    const { confirmPassword, ...newUser } = values;
+    setAuthFailed(false);
+    const res = await axios.post(routes.signUpPath(), newUser);
+    const { data } = res;
+    // Здесь выводится предупреждение про Id
+    data.id = 1; //_.uniqueId();
+    dispatch(setUser(data));
+    console.log(data, 'data dispatch newUser');
+    data.userLoggedIn = true;
+    localStorage.setItem('userData', JSON.stringify(data));
+    auth.logIn();
+    navigate("/");
+  }
+
+  return(
+    <Formik
+      validationSchema={registrationFormSchema}
+      onSubmit={regSubmit}
+      initialValues={{
+        username: '',
+        password: '',
+        confirmPassword: '',
+      }}
+    >
+      {({ handleSubmit, handleChange, values, touched, errors }) => (
+      <Form className="w-50" onSubmit={handleSubmit}>
+        <h1 className="text-center mb-4">Регистрация</h1>
+        <Form.Group className="form-floating mb-3 position-relative">
+          <Form.Control
+            onChange={handleChange}
+            value={values.username}
+            placeholder="От 3 до 20 символов"
+            name="username"
+            autoComplete="username"
+            id="username"
+            isInvalid={touched.username && !!errors.username}
+            ref={inputRef}
+            type="text"
+          />
+          <Form.Label>Имя пользователя</Form.Label>
+          <Form.Control.Feedback type="invalid" tooltip>
+            {errors.username}
+          </Form.Control.Feedback>
+        </Form.Group>
+        <Form.Group className="form-floating mb-3 position-relative">
+          <Form.Control
+            onChange={handleChange}
+            value={values.password}
+            placeholder="Не менее 6 символов"
+            name="password"
+            aria-describedby="passwordHelpBlock"
+            autoComplete="new-password"
+            type="password"
+            id="password"
+            isInvalid={touched.password && !!errors.password}
+          />
+          <Form.Control.Feedback type="invalid" tooltip>
+            {errors.password}
+          </Form.Control.Feedback>
+          <Form.Label>Пароль</Form.Label>
+        </Form.Group>
+        <Form.Group className="form-floating mb-4 position-relative">
+          <Form.Control
+            onChange={handleChange}
+            value={values.confirmPassword}
+            placeholder="Пароли должны совпадать"
+            name="confirmPassword"
+            autoComplete="new-password"
+            type="password"
+            id="confirmPassword"
+            isInvalid={touched.confirmPassword && !!errors.confirmPassword}
+          />
+          <Form.Control.Feedback type="invalid" tooltip>
+            {errors.confirmPassword}
+          </Form.Control.Feedback>
+          <Form.Label>Подтвердите пароль</Form.Label>
+        </Form.Group>
+        <Button type="submit" variant="outline-primary" className="w-100">Зарегистрироваться</Button>
+      </Form>
+            )}
+    </Formik>
+  )
+};
+
+const Registration = () => {
+  return (
+    <div className="container-fluid h-100">
+      <div className="row justify-content-center align-content-center h-100">
+        <div className="col-12 col-md-8 col-xxl-6">
+          <div className="card shadow-sm">
+            <div className="card-body d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
+              <div>
+                <img src={regLogo} className="rounded-circle" alt="Регистрация" />
+              </div>
+              <RegistrationForm />
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  )
+};
+
+export default Registration;
+
+	/*const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
@@ -31,16 +158,16 @@ const registrationForm = () => {
 		validationSchema: registrationFormSchema,
     onSubmit: async (values) => {
       console.log('submit registration');
-      // setAuthFailed(false); ?? смотря как реализовать красные поля во время ошибки
-
+      setAuthFailed(false);
+      const { confirmPassword, ...newUser } = values;
       try {
-        // setAuthFailed(false);
-				const res = await axios.post(routes.loginPath(), values);
+        setAuthFailed(false);
+				const res = await axios.post(routes.signUp(), newUser);
         const { data } = res;
         // Здесь выводится предупреждение про Id
-        data.id = _.uniqueId();
+        data.id = 1; //_.uniqueId();
         dispatch(setUser(data));
-        // console.log(data, 'data dispatch');
+        console.log(data, 'data dispatch newUser');
         data.userLoggedIn = true;
 				localStorage.setItem('userData', JSON.stringify(data));
 				auth.logIn();
@@ -57,68 +184,4 @@ const registrationForm = () => {
       }
     },
   });
-
-  return(
-    <Form class="w-50" onSubmit={formik.handleSubmit}>
-      <h1 class="text-center mb-4">Регистрация</h1>
-      <Form.Group class="form-floating mb-3">
-        <Form.Control
-          onChange={formik.handleChange}
-          value={formik.values.username}
-          placeholder="От 3 до 20 символов"
-          name="username"
-          autocomplete="username"
-          id="username"
-          isInvalid={!!errors.username}
-          ref={inputRef}
-        />
-        <Form.Label>{/*for="username"*/}Имя пользователя</Form.Label>
-        <Form.Control.Feedback type="invalid" tooltip>
-          {errors.username/* placement="right" Обязательное поле*/}
-        </Form.Control.Feedback>
-      </Form.Group>
-      <Form.Group class="form-floating mb-3">
-        <Form.Control
-          onChange={formik.handleChange}
-          value={formik.values.password}
-          placeholder="Не менее 6 символов"
-          name="password"
-          aria-describedby="passwordHelpBlock"
-          autocomplete="new-password"
-          type="password"
-          id="password"
-        />
-        <Form.Control.Feedback type="invalid" tooltip>
-          {errors.password/* placement="right" Обязательное поле*/}
-        </Form.Control.Feedback>
-        <Form.Label>{/*for="password"*/}Пароль</Form.Label>
-      </Form.Group>
-      <Form.Group class="form-floating mb-4">
-        <Form.Control
-          onChange={formik.handleChange}
-          value={formik.values.confirmPassword}
-          placeholder="Пароли должны совпадать"
-          name="confirmPassword"
-          autocomplete="new-password"
-          type="password"
-          id="confirmPassword"
-        />
-        <Form.Control.Feedback type="invalid" tooltip>
-          {errors.confirmPassword/* placement="right"*/}
-        </Form.Control.Feedback>
-        <Form.Label>{/*for="password"*/}Подтвердите пароль</Form.Label>
-      </Form.Group>
-      <Button type="submit" variant="outline-primary" className="w-100">Зарегистрироваться</Button>
-    </Form>
-  )
-};
-
-const Registration = () => {
-    return (
-			<p>Форма регистрации</p>
-    )
-};
-
-export default Registration;
-
-
+*/

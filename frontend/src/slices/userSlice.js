@@ -12,7 +12,7 @@ const userSlice = createSlice({
   },
 });
 
-export const selectors = userAdapter.getSelectors((state) => state.user);
+export const selectorsUser = userAdapter.getSelectors((state) => state.user);
 
 export const { setUser, removeUser } = userSlice.actions;
 

@@ -12,32 +12,34 @@ import routes from '../routes.js';
 
 import { selectorsChannels, setChannels } from '../slices/channelsSlice.js';
 import { selectorsMessages, addMessage, updateMessage, removeMessage, setMessages } from '../slices/messagesSlice.js';
-
+import { selectorsUser, setUser, removeUser } from '../slices/userSlice.js';
 
   // const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5001';
   // const socket = io(URL);
 const socket = io();
 
-const MessageForm = () => {
+const MessageForm = (props) => {
   //хз
   // const auth = useContext(authContext);
+  const { activeChannelId } = props;
 	const inputRef = useRef();
-
 	useEffect(() => {
     inputRef.current.focus();
   }, []);
 
+
 	const formik = useFormik({
     initialValues: {
       body: '',
-      channelId: '1',
-      username: 'admin',
+      channelId: activeChannelId,
+      username: '',
     },
     onSubmit: async (values) => {
-      console.log('add message');
+      console.log(values, 'values add message');
       try {
         const userData = JSON.parse(localStorage.getItem('userData'));
-        const { token } = userData;
+        const { token, username } = userData;
+        formik.values.username = username;
         const res = await axios.post(routes.messagesPath(), values, {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -85,7 +87,7 @@ const MessageForm = () => {
 };
 
 const MainPage = () => {
-  const [activeChannel, setActiveChannel] = useState('general');
+  const [activeChannelId, setActiveChannelId] = useState('1');
   const dispatch = useDispatch();
 
   //получаем каналы при входе
@@ -134,7 +136,7 @@ const MainPage = () => {
     socket.on("connect", () => {
       console.log('user connected');
       socket.on('newMessage', (payload) => {
-        console.log(payload, 'newMessage'); // => { body: "new message", channelId: 7, id: 8, username: "admin" }
+        console.log(payload, 'newMessage socet'); // => { body: "new message", channelId: 7, id: 8, username: "admin" }
         dispatch(addMessage(payload));
       });
     });
@@ -142,7 +144,7 @@ const MainPage = () => {
 
   const channels = useSelector(selectorsChannels.selectAll);
   const messages = useSelector(selectorsMessages.selectAll);
-  // console.log(messages, 'messages');
+  console.log(channels, 'channels');
 
     return (
       <div className="container h-100 my-4 overflow-hidden rounded shadow">
@@ -161,7 +163,7 @@ const MainPage = () => {
             <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
               {channels.map((channel) => {
                 const btnClasses = cn('w-100', 'rounded-0', 'text-start', 'btn', {
-                  'btn-secondary': activeChannel === channel.name,
+                  'btn-secondary': activeChannelId === channel.id,
                 });
                 return(
                   <li className="nav-item w-100" key={channel.id}>
@@ -187,13 +189,13 @@ const MainPage = () => {
                 {messages.map((message) => {
                   return(
                     <div className="text-break mb-2" key={message.id}>
-                      <b>admin</b>: {message.body}
+                      <b>{message.username}</b>: {message.body}
                     </div>
                   )              
                 })}
               </div>
               <div className="mt-auto px-5 py-3">
-                <MessageForm />
+                <MessageForm activeChannelId={activeChannelId}/>
               </div>
             </div>
           </div>
