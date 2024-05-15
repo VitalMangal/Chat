@@ -11,8 +11,10 @@ const AuthButton = () => {
   return (
     auth.loggedIn
       ? <Button onClick={auth.logOut}>Log out</Button>
-      : <Button as={Link} to="/login" state={{ from: location }}>Log in</Button>
+      : null
   );
 };
 
 export default AuthButton;
+
+//<Button as={Link} to="/login" state={{ from: location }}>Log in</Button>

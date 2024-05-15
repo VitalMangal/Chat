@@ -1,21 +1,99 @@
 import React, {useEffect, useRef, useState, useContext} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+// import { useNavigate } from 'react-router-dom';
+import { useFormik } from 'formik';
+import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
+import cn from 'classnames';
+import { io } from "socket.io-client";
 
 import authContext from '../context/AuthContext.js';
 import routes from '../routes.js';
 
-import { selectors, setChannels } from '../slices/channelsSlice.js';
+import { selectorsChannels, setChannels } from '../slices/channelsSlice.js';
+import { selectorsMessages, addMessage, updateMessage, removeMessage, setMessages } from '../slices/messagesSlice.js';
+
+
+  // const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5001';
+  // const socket = io(URL);
+const socket = io();
+
+const MessageForm = () => {
+  //хз
+  // const auth = useContext(authContext);
+	const inputRef = useRef();
+
+	useEffect(() => {
+    inputRef.current.focus();
+  }, []);
+
+	const formik = useFormik({
+    initialValues: {
+      body: '',
+      channelId: '1',
+      username: 'admin',
+    },
+    onSubmit: async (values) => {
+      console.log('add message');
+      try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const { token } = userData;
+        const res = await axios.post(routes.messagesPath(), values, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        formik.values.body = '';
+        //console.log(res, 'res add message');
+      } catch (err) {
+        console.log(err, 'add message error');
+        formik.setSubmitting(false);
+        // не знаю что это значит
+        if (err.isAxiosError && err.response.status === 401) {
+          inputRef.current.select();
+          return;
+        }
+        throw err;
+      }
+    },
+  });
+
+  return (
+    <Form onSubmit={formik.handleSubmit} noValidate="" className="py-1 border rounded-2">
+      <Form.Group className="input-group has-validation">
+        <Form.Control
+          onChange={formik.handleChange}
+          value={formik.values.body}
+          name="body"
+          id="body"
+          aria-label="Новое сообщение"
+          placeholder="Введите сообщение..."
+          className="border-0 p-0 ps-2 form-control"
+          ref={inputRef}
+          type="text"                      
+        />
+        {/* изменить оформление кнопки variant="light"*/}
+        <Button type="submit" disabled="" variant="light" className="btn-group-vertical">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
+            <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"></path>
+          </svg>
+          <span className="visually-hidden">Отправить</span>
+        </Button>
+      </Form.Group>
+    </Form>
+  )
+};
 
 const MainPage = () => {
+  const [activeChannel, setActiveChannel] = useState('general');
   const dispatch = useDispatch();
 
+  //получаем каналы при входе
   useEffect(() => {
     const getChannels = async () => {
       const userData = JSON.parse(localStorage.getItem('userData'));
       const { token } = userData;
-      const response = await axios.get('/api/v1/channels', {
+      const response = await axios.get(routes.channelsPath(), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -26,8 +104,45 @@ const MainPage = () => {
     getChannels();
   }, [])
 
-  const channels = useSelector(selectors.selectAll);
-  console.log(channels, 'channels');
+  //получаем сообщения при входе
+  useEffect(() => {
+    const getMessages = async () => {
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const { token } = userData;
+      const response = await axios.get(routes.messagesPath(), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response, 'messages response');
+      dispatch(setMessages(response.data));
+    };
+    getMessages();
+  }, [])
+
+  //не совсем понял необходимость этого блока
+  useEffect(() => {
+    // no-op if the socket is already connected
+    socket.connect();
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
+
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log('user connected');
+      socket.on('newMessage', (payload) => {
+        console.log(payload, 'newMessage'); // => { body: "new message", channelId: 7, id: 8, username: "admin" }
+        dispatch(addMessage(payload));
+      });
+    });
+  }, []);
+
+  const channels = useSelector(selectorsChannels.selectAll);
+  const messages = useSelector(selectorsMessages.selectAll);
+  // console.log(messages, 'messages');
 
     return (
       <div className="container h-100 my-4 overflow-hidden rounded shadow">
@@ -45,9 +160,12 @@ const MainPage = () => {
             </div>
             <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
               {channels.map((channel) => {
+                const btnClasses = cn('w-100', 'rounded-0', 'text-start', 'btn', {
+                  'btn-secondary': activeChannel === channel.name,
+                });
                 return(
                   <li className="nav-item w-100" key={channel.id}>
-                    <button type="button" className="w-100 rounded-0 text-start btn">
+                    <button type="button" className={btnClasses}>
                       <span className="me-1">#</span>
                         {channel.name}
                     </button>
@@ -62,21 +180,20 @@ const MainPage = () => {
                 <p className="m-0">
                   <b># general</b> {/*активнй канал*/}
                 </p>
-                <span className="text-muted">0 сообщений</span>
+                {/*поменять на кол-во сообщений в отдельном чате*/}
+                <span className="text-muted">{messages.length} сообщений</span>
               </div>
-              <div id="messages-box" className="chat-messages overflow-auto px-5 "></div>
+              <div id="messages-box" className="chat-messages overflow-auto px-5 ">
+                {messages.map((message) => {
+                  return(
+                    <div className="text-break mb-2" key={message.id}>
+                      <b>admin</b>: {message.body}
+                    </div>
+                  )              
+                })}
+              </div>
               <div className="mt-auto px-5 py-3">
-                <form noValidate="" className="py-1 border rounded-2">
-                  <div className="input-group has-validation">
-                    <input name="body" aria-label="Новое сообщение" placeholder="Введите сообщение..." className="border-0 p-0 ps-2 form-control" value="" />
-                    <button type="submit" disabled="" className="btn btn-group-vertical">
-                      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
-                        <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"></path>
-                      </svg>
-                      <span className="visually-hidden">Отправить</span>
-                    </button>
-                  </div>
-                </form>
+                <MessageForm />
               </div>
             </div>
           </div>

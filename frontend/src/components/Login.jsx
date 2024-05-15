@@ -45,7 +45,7 @@ const LoginForm = () => {
         // Здесь выводится предупреждение про Id
         data.id = _.uniqueId();
         dispatch(setUser(data));
-        console.log(data, 'data dispatch');
+        // console.log(data, 'data dispatch');
         data.userLoggedIn = true;
 				localStorage.setItem('userData', JSON.stringify(data));
 				auth.logIn();
