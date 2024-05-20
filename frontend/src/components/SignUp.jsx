@@ -43,18 +43,29 @@ const RegistrationForm = () => {
   const regSubmit = async (values) => {
     setIsLoading(true);
     console.log('submit registration');
+    try{
+      const { confirmPassword, ...newUser } = values;
+      const res = await axios.post(routes.signUpPath(), newUser);
+      const { data } = res;
+      data.id = 1; //_.uniqueId();
+      dispatch(setUser(data));
+      console.log(data, 'data dispatch newUser');
+      data.userLoggedIn = true;
+      localStorage.setItem('userData', JSON.stringify(data));
+      auth.logIn();
+      setIsLoading(false);
+      navigate("/");
+    } catch (err) {
+      console.log(err, 'error SignUp');
+      setIsLoading(false);
+      // setSubmitting(false);
+      // if (err.isAxiosError && err.response.status === 409) {
+        inputRef.current.select();
+        return;
+      //}
+      throw err;
+    }
 
-    const { confirmPassword, ...newUser } = values;
-    const res = await axios.post(routes.signUpPath(), newUser);
-    const { data } = res;
-    data.id = 1; //_.uniqueId();
-    dispatch(setUser(data));
-    console.log(data, 'data dispatch newUser');
-    data.userLoggedIn = true;
-    localStorage.setItem('userData', JSON.stringify(data));
-    auth.logIn();
-    setIsLoading(false);
-    navigate("/");
   }
 
   return(
@@ -137,7 +148,7 @@ const RegistrationForm = () => {
   )
 };
 
-const Registration = () => {
+const SignUp = () => {
   return (
     <div className="container-fluid h-100">
       <div className="row justify-content-center align-content-center h-100">
@@ -156,4 +167,4 @@ const Registration = () => {
   )
 };
 
-export default Registration;
+export default SignUp;

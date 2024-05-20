@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { ButtonToolbar, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-bootstrap';
 import axios from 'axios';
 import cn from 'classnames';
@@ -19,19 +20,25 @@ const renderModal = (modalInfo, setActiveChannelId, closeModal) => {
 
 const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //получаем каналы при входе
   useEffect(() => {
     const getChannels = async () => {
       const userData = JSON.parse(localStorage.getItem('userData'));
       const { token } = userData;
-      const response = await axios.get(routes.channelsPath(), {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
-      console.log(response, 'response');
-      dispatch(setChannels(response.data));
+      try {
+        const response = await axios.get(routes.channelsPath(), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        console.log(response, 'response');
+        dispatch(setChannels(response.data));
+      } catch {
+        navigate('/login')
+      }
+
     };
     getChannels();
   }, [])

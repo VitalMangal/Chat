@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
@@ -83,18 +84,24 @@ const MessageForm = ({ activeChannelId }) => {
 const MessagesComponent = ({ activeChannelId }) => {
   console.log(activeChannelId, 'activeChannelId messageComponent')
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   //получаем сообщения при входе
   useEffect(() => {
     const getMessages = async () => {
       const userData = JSON.parse(localStorage.getItem('userData'));
       const { token } = userData;
+      try {
       const response = await axios.get(routes.messagesPath(), {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
       dispatch(setMessages(response.data));
+      } catch {
+        navigate('/login')
+      }
+
     };
     getMessages();
   }, [])
