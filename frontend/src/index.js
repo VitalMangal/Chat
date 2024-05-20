@@ -6,6 +6,8 @@ import App from './App';
 import store from './slices/index.js';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
+import './style.css'
+
 const root = ReactDOM.createRoot(document.getElementById('chat'));
 root.render(
   <React.StrictMode>
