@@ -21,6 +21,8 @@
   "homepage": "https://github.com/VitalMangal/frontend-project-12#readme",
   "dependencies": {
     "@hexlet/chat-server": "^2.0.3",
-    "classnames": "^2.5.1"
+    "bootstrap": "^5.3.3",
+    "classnames": "^2.5.1",
+    "react-bootstrap": "^2.10.2"
   }
 }
