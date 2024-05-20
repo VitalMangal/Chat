@@ -9,17 +9,17 @@ import { selectorsChannels } from '../../../slices/channelsSlice.js';
 
 import routes from '../../../routes.js';
 
-const addChannel = (setActiveChannelId, closeModal) => async (values) => {
+const renameSubmit = (modalInfo, closeModal) => async (values) => {
   const userData = JSON.parse(localStorage.getItem('userData'));
   const { token } = userData;
-  const response = await axios.post(routes.channelsPath(), values, {
+  await axios.patch(routes.changeChannelPath(modalInfo.channel.id), values, {
     headers: {
       Authorization: `Bearer ${token}`,
     },
   })
-  await setActiveChannelId(response.data.id);
-  closeModal();
+  closeModal();  
 };
+
 const getSchema = (channels) => {
   const schema = yup.object().shape({
     name: yup
@@ -32,27 +32,27 @@ const getSchema = (channels) => {
   return schema;
 };
 
-const Add = ({ setActiveChannelId, closeModal }) => {
+const Rename = ({ modalInfo, closeModal }) => {
   const { Formik } = formik;
   const channelsNames = useSelector(selectorsChannels.selectAll)
     .map((channel) => channel.name);
 
   const inputRef = useRef();
   useEffect(() => {
-    inputRef.current.focus();
+    inputRef.current.select();    
   }, []);
 
   return (
     <Modal show aria-labelledby="contained-modal-title-vcenter" centered >
       <Modal.Header closeButton onHide={closeModal}>
-        <Modal.Title>Добавить канал</Modal.Title>
+        <Modal.Title>Переименовать канал</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik
           validationSchema={getSchema(channelsNames)}
-          onSubmit={addChannel(setActiveChannelId, closeModal)}
+          onSubmit={renameSubmit(modalInfo, closeModal)}
           initialValues={{
-            name: '',
+            name: modalInfo.channel.name,
           }}
         >
         {({ handleSubmit, handleChange, values, touched, errors }) => (
@@ -68,7 +68,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
               isInvalid={touched.name && !!errors.name}
               type="text"
             />
-            <Form.Label htmlFor="name" visuallyHidden>Название нового канала</Form.Label>
+            <Form.Label htmlFor="name" visuallyHidden>Новое название канала</Form.Label>
             <Form.Control.Feedback type="invalid">{errors.name}</Form.Control.Feedback>
           </Form.Group>
           <Form.Group  className="mt-2 d-flex justify-content-end">
@@ -83,4 +83,4 @@ const Add = ({ setActiveChannelId, closeModal }) => {
   );
 };
 
-export default Add;
+export default Rename;

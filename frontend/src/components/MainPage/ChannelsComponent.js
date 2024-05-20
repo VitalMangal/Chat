@@ -1,10 +1,13 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
+import { ButtonToolbar, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-bootstrap';
+import axios from 'axios';
 import cn from 'classnames';
 
+import routes from '../../routes.js';
 import getModal from './Modals/index.js';
 
-import { selectorsChannels } from '../../slices/channelsSlice.js';
+import { selectorsChannels, setChannels, addChannel, updateChannel, removeChannel } from '../../slices/channelsSlice.js';
 
 const renderModal = (modalInfo, setActiveChannelId, closeModal) => {
   if (!modalInfo.type) {
@@ -15,11 +18,29 @@ const renderModal = (modalInfo, setActiveChannelId, closeModal) => {
 };
 
 const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
-  const [modalInfo, setModalInfo] = useState({ type: null, channelName: null });
+  const dispatch = useDispatch();
 
-  const openModal = (type, channelName = null) => setModalInfo({type, channelName });
-  const closeModal = () => setModalInfo({ type: null, channelName: null });
-    
+  //получаем каналы при входе
+  useEffect(() => {
+    const getChannels = async () => {
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const { token } = userData;
+      const response = await axios.get(routes.channelsPath(), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      console.log(response, 'response');
+      dispatch(setChannels(response.data));
+    };
+    getChannels();
+  }, [])
+
+  const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
+
+  const openModal = (type, channel = null) => setModalInfo({type, channel });
+  const closeModal = () => setModalInfo({ type: null, channel: null });
+  
   const channels = useSelector(selectorsChannels.selectAll);
 
   return (
@@ -35,21 +56,35 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
             <span className="visually-hidden">+</span>
           </button>
         </div>
-        <ul id="channels-box" className="nav flex-column nav-pills nav-fill px-2 mb-3 overflow-auto h-100 d-block">
+        <ButtonToolbar vertical='true' id="channels-box" aria-label="Channels toolbar">
           {channels.map((channel) => {
-            const btnClasses = cn('w-100', 'rounded-0', 'text-start', 'btn', {
-              'btn-secondary': activeChannelId === channel.id,
-            });
-            return(
-              <li className="nav-item w-100" key={channel.id}>
-                <button type="button" className={btnClasses}>
-                  <span className="me-1">#</span>
-                    {channel.name}
-                </button>
-              </li>
-            )              
+            const btnClasses = cn('rounded-0', 'text-start');
+            const buttonVariant = (channel.id === activeChannelId ? 'secondary' : 'light');
+            if(!channel.removable) {
+              return(
+                <ButtonGroup className = 'w-100' key={channel.id}>
+                  <Button variant={buttonVariant} className={btnClasses} onClick={() => setActiveChannelId(channel.id)}>
+                    <span className="me-1">#</span>
+                      {channel.name}
+                  </Button>
+                </ButtonGroup>
+              )
+            }
+            return (
+                <ButtonGroup className="w-100" key={channel.id}>
+                  <Button variant={buttonVariant} className={btnClasses} onClick={() => setActiveChannelId(channel.id)}>
+                    <span className="me-1">#</span>
+                      {channel.name}
+                  </Button>
+
+                  <DropdownButton as={ButtonGroup} variant={buttonVariant} title="" id="dropdown">
+                    <Dropdown.Item eventKey="1" onClick={() => openModal('remove', channel)}>Удалить</Dropdown.Item>
+                    <Dropdown.Item eventKey="2" onClick={() => openModal('rename', channel)}>Переименовать</Dropdown.Item>
+                  </DropdownButton>
+                </ButtonGroup>
+            );       
           })}
-        </ul>
+        </ButtonToolbar>
       </div>
       {renderModal(modalInfo, setActiveChannelId, closeModal)}
     </>

@@ -18,7 +18,7 @@ const RegistrationForm = () => {
   const auth = useContext(authContext);
 	const navigate = useNavigate();
 	const inputRef = useRef();
-	const [authFailed, setAuthFailed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   const registrationFormSchema = yup.object().shape({
     username: yup
@@ -41,20 +41,19 @@ const RegistrationForm = () => {
   }, []);
 
   const regSubmit = async (values) => {
+    setIsLoading(true);
     console.log('submit registration');
 
-    setAuthFailed(false);
     const { confirmPassword, ...newUser } = values;
-    setAuthFailed(false);
     const res = await axios.post(routes.signUpPath(), newUser);
     const { data } = res;
-    // Здесь выводится предупреждение про Id
     data.id = 1; //_.uniqueId();
     dispatch(setUser(data));
     console.log(data, 'data dispatch newUser');
     data.userLoggedIn = true;
     localStorage.setItem('userData', JSON.stringify(data));
     auth.logIn();
+    setIsLoading(false);
     navigate("/");
   }
 
@@ -82,6 +81,7 @@ const RegistrationForm = () => {
             isInvalid={touched.username && !!errors.username}
             ref={inputRef}
             type="text"
+            disabled={isLoading}
           />
           <Form.Label>Имя пользователя</Form.Label>
           <Form.Control.Feedback type="invalid" tooltip>
@@ -99,6 +99,7 @@ const RegistrationForm = () => {
             type="password"
             id="password"
             isInvalid={touched.password && !!errors.password}
+            disabled={isLoading}
           />
           <Form.Control.Feedback type="invalid" tooltip>
             {errors.password}
@@ -115,13 +116,21 @@ const RegistrationForm = () => {
             type="password"
             id="confirmPassword"
             isInvalid={touched.confirmPassword && !!errors.confirmPassword}
+            disabled={isLoading}
           />
           <Form.Control.Feedback type="invalid" tooltip>
             {errors.confirmPassword}
           </Form.Control.Feedback>
           <Form.Label>Подтвердите пароль</Form.Label>
         </Form.Group>
-        <Button type="submit" variant="outline-primary" className="w-100">Зарегистрироваться</Button>
+        <Button
+          disabled={isLoading}
+          type="submit"
+          variant="outline-primary"
+          className="w-100"
+        >
+          Зарегистрироваться
+        </Button>
       </Form>
             )}
     </Formik>
@@ -148,40 +157,3 @@ const Registration = () => {
 };
 
 export default Registration;
-
-	/*const formik = useFormik({
-    initialValues: {
-      username: '',
-      password: '',
-      confirmPassword: '',
-    },
-		validationSchema: registrationFormSchema,
-    onSubmit: async (values) => {
-      console.log('submit registration');
-      setAuthFailed(false);
-      const { confirmPassword, ...newUser } = values;
-      try {
-        setAuthFailed(false);
-				const res = await axios.post(routes.signUp(), newUser);
-        const { data } = res;
-        // Здесь выводится предупреждение про Id
-        data.id = 1; //_.uniqueId();
-        dispatch(setUser(data));
-        console.log(data, 'data dispatch newUser');
-        data.userLoggedIn = true;
-				localStorage.setItem('userData', JSON.stringify(data));
-				auth.logIn();
-				navigate("/");
-      } catch (err) {
-        console.log(err, 'error');
-        formik.setSubmitting(false);
-        if (err.isAxiosError && err.response.status === 401) {
-          setAuthFailed(true);
-          inputRef.current.select();
-          return;
-        }
-        throw err;
-      }
-    },
-  });
-*/

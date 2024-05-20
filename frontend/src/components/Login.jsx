@@ -23,6 +23,7 @@ const LoginForm = () => {
 	const navigate = useNavigate();
 	const inputRef = useRef();
 	const [authFailed, setAuthFailed] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
 	useEffect(() => {
     inputRef.current.focus();
@@ -35,8 +36,7 @@ const LoginForm = () => {
     },
 		validationSchema: formSchema,
     onSubmit: async (values) => {
-      console.log('submit');
-      setAuthFailed(false);
+      setIsLoading(true);
 
       try {
         setAuthFailed(false);
@@ -49,9 +49,11 @@ const LoginForm = () => {
         data.userLoggedIn = true;
 				localStorage.setItem('userData', JSON.stringify(data));
 				auth.logIn();
+        setIsLoading(false);
 				navigate("/");
       } catch (err) {
         console.log(err, 'error');
+        setIsLoading(false);
         formik.setSubmitting(false);
         if (err.isAxiosError && err.response.status === 401) {
           setAuthFailed(true);
@@ -78,6 +80,7 @@ const LoginForm = () => {
           required
           ref={inputRef}
           type="text"
+          disabled={isLoading}
         />
         <Form.Label htmlFor="username">Ваш ник</Form.Label>
       </Form.Group>
@@ -92,11 +95,19 @@ const LoginForm = () => {
           required
           placeholder="Пароль"
           isInvalid={authFailed}
+          disabled={isLoading}
         />
         <Form.Label htmlFor="password" className="form-label">Пароль</Form.Label>
         <Form.Control.Feedback type="invalid">Неверное имя пользователя или пароль</Form.Control.Feedback>
       </Form.Group>
-      <Button type="submit" variant="outline-primary" className="w-100 mb-3">Войти</Button>
+      <Button
+        type="submit"
+        variant="outline-primary"
+        className="w-100 mb-3"
+        disabled={isLoading}
+      >
+        Войти
+      </Button>
     </Form>
   )
 };
