@@ -63,9 +63,9 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
             <span className="visually-hidden">+</span>
           </button>
         </div>
-        <ButtonToolbar vertical='true' id="channels-box" aria-label="Channels toolbar">
+        <ButtonToolbar vertical='true' id="channels-box" aria-label="" className='flex-column mb-3 px-2 text-truncate h-100 overflow-auto'>
           {channels.map((channel) => {
-            const btnClasses = cn('rounded-0', 'text-start');
+            const btnClasses = cn('rounded-0', 'text-start', 'text-truncate');
             const buttonVariant = (channel.id === activeChannelId ? 'secondary' : 'light');
             if(!channel.removable) {
               return(
@@ -78,7 +78,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
               )
             }
             return (
-                <ButtonGroup className="w-100" key={channel.id}>
+                <ButtonGroup className="w-100 rounded-0" key={channel.id}>
                   <Button variant={buttonVariant} className={btnClasses} onClick={() => setActiveChannelId(channel.id)}>
                     <span className="me-1">#</span>
                       {channel.name}

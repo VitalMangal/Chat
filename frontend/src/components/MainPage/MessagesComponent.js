@@ -40,6 +40,7 @@ const MessageForm = ({ activeChannelId }) => {
         });
         formik.values.body = '';
         setIsLoading(false);
+        inputRef.current.focus();
       } catch (err) {
         console.log(err, 'add message error');
         setIsLoading(false);

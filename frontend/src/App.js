@@ -32,9 +32,11 @@ function App() {
     <AuthProvider>
       <div className="d-flex flex-column h-100">
         <BrowserRouter>
-          <Navbar bg="white" expand="lg" className="shadow-sm navbar-light bg-white">
-            <Navbar.Brand as={Link} to="/">Hexlet Chat</Navbar.Brand>
-            <AuthButton />
+          <Navbar bg="white" expand="lg" className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
+            <div className='container'>
+              <Navbar.Brand as={Link} to="/">Hexlet Chat</Navbar.Brand>
+              <AuthButton />
+            </div>
           </Navbar>
           <Routes>
             <Route 
