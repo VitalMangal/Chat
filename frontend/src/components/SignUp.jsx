@@ -19,6 +19,7 @@ const RegistrationForm = () => {
 	const navigate = useNavigate();
 	const inputRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
+  const [submitError, setSubmitError] = useState(null);
 
   const registrationFormSchema = yup.object().shape({
     username: yup
@@ -42,28 +43,26 @@ const RegistrationForm = () => {
 
   const regSubmit = async (values) => {
     setIsLoading(true);
-    console.log('submit registration');
+    setSubmitError(null);
     try{
       const { confirmPassword, ...newUser } = values;
       const res = await axios.post(routes.signUpPath(), newUser);
       const { data } = res;
       data.id = 1; //_.uniqueId();
       dispatch(setUser(data));
-      console.log(data, 'data dispatch newUser');
       data.userLoggedIn = true;
       localStorage.setItem('userData', JSON.stringify(data));
       auth.logIn();
       setIsLoading(false);
       navigate("/");
     } catch (err) {
-      console.log(err, 'error SignUp');
       setIsLoading(false);
-      // setSubmitting(false);
-      // if (err.isAxiosError && err.response.status === 409) {
+      if (err.isAxiosError && err.response.status === 409) {
+        setSubmitError('Такой пользователь уже существует');
         inputRef.current.select();
         return;
-      //}
-      throw err;
+      }
+    throw err;
     }
 
   }
@@ -89,7 +88,7 @@ const RegistrationForm = () => {
             name="username"
             autoComplete="username"
             id="username"
-            isInvalid={touched.username && !!errors.username}
+            isInvalid={touched.username && !!errors.username || !!submitError}
             ref={inputRef}
             type="text"
             disabled={isLoading}
@@ -109,7 +108,7 @@ const RegistrationForm = () => {
             autoComplete="new-password"
             type="password"
             id="password"
-            isInvalid={touched.password && !!errors.password}
+            isInvalid={touched.password && !!errors.password || !!submitError}
             disabled={isLoading}
           />
           <Form.Control.Feedback type="invalid" tooltip>
@@ -126,11 +125,11 @@ const RegistrationForm = () => {
             autoComplete="new-password"
             type="password"
             id="confirmPassword"
-            isInvalid={touched.confirmPassword && !!errors.confirmPassword}
+            isInvalid={touched.confirmPassword && !!errors.confirmPassword || !!submitError}
             disabled={isLoading}
           />
           <Form.Control.Feedback type="invalid" tooltip>
-            {errors.confirmPassword}
+            {errors.confirmPassword || submitError}
           </Form.Control.Feedback>
           <Form.Label>Подтвердите пароль</Form.Label>
         </Form.Group>
