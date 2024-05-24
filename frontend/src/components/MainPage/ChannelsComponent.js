@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { ButtonToolbar, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-bootstrap';
+import { useTranslation } from 'react-i18next';
 import axios from 'axios';
 import cn from 'classnames';
 
@@ -21,6 +22,7 @@ const renderModal = (modalInfo, setActiveChannelId, closeModal) => {
 const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   //получаем каналы при входе
   useEffect(() => {
@@ -33,12 +35,10 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
             Authorization: `Bearer ${token}`,
           },
         });
-        console.log(response, 'response');
         dispatch(setChannels(response.data));
       } catch {
         navigate('/login')
       }
-
     };
     getChannels();
   }, [])
@@ -54,7 +54,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
     <>
       <div className="col-4 col-md-2 border-end px-0 bg-light flex-column h-100 d-flex">
         <div className="d-flex mt-1 justify-content-between mb-2 ps-4 pe-2 p-4">
-          <b>Каналы</b>
+          <b>{t('channels.channels')}</b>
           <button type="button" onClick={() => openModal('add')} className="p-0 text-primary btn btn-group-vertical">
             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
               <path d="M14 1a1 1 0 0 1 1 1v12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1zM2 0a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V2a2 2 0 0 0-2-2z"></path>
@@ -85,8 +85,8 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
                   </Button>
 
                   <DropdownButton as={ButtonGroup} variant={buttonVariant} title="" id="dropdown">
-                    <Dropdown.Item eventKey="1" onClick={() => openModal('remove', channel)}>Удалить</Dropdown.Item>
-                    <Dropdown.Item eventKey="2" onClick={() => openModal('rename', channel)}>Переименовать</Dropdown.Item>
+                    <Dropdown.Item eventKey="1" onClick={() => openModal('remove', channel)}>{t('channels.remove')}</Dropdown.Item>
+                    <Dropdown.Item eventKey="2" onClick={() => openModal('rename', channel)}>{t('channels.rename')}</Dropdown.Item>
                   </DropdownButton>
                 </ButtonGroup>
             );       

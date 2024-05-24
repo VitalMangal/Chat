@@ -4,6 +4,7 @@ import { useFormik } from 'formik';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import _ from 'lodash';
 
@@ -18,6 +19,7 @@ const formSchema = Yup.object().shape({
 });
 
 const LoginForm = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const auth = useContext(authContext);
 	const navigate = useNavigate();
@@ -45,14 +47,12 @@ const LoginForm = () => {
         // Здесь выводится предупреждение про Id
         data.id = _.uniqueId();
         dispatch(setUser(data));
-        // console.log(data, 'data dispatch');
         data.userLoggedIn = true;
 				localStorage.setItem('userData', JSON.stringify(data));
 				auth.logIn();
         setIsLoading(false);
 				navigate("/");
       } catch (err) {
-        console.log(err, 'error');
         setIsLoading(false);
         formik.setSubmitting(false);
         if (err.isAxiosError && err.response.status === 401) {
@@ -67,12 +67,12 @@ const LoginForm = () => {
 
   return (
     <Form onSubmit={formik.handleSubmit} className="col-12 col-md-6 mt-3 mt-mb-0">
-      <h1 className="text-center mb-4">Войти</h1>
+      <h1 className="text-center mb-4">{t('login.come')}</h1>
       <Form.Group className="form-floating mb-3">
         <Form.Control
           onChange={formik.handleChange}
           value={formik.values.username}
-          placeholder="Ваш ник"
+          placeholder={t('login.nickname')}
           name="username"
           id="username"
           autoComplete="username"
@@ -82,7 +82,7 @@ const LoginForm = () => {
           type="text"
           disabled={isLoading}
         />
-        <Form.Label htmlFor="username">Ваш ник</Form.Label>
+        <Form.Label htmlFor="username">{t('login.nickname')}</Form.Label>
       </Form.Group>
       <Form.Group className="form-floating mb-4">
         <Form.Control
@@ -93,12 +93,12 @@ const LoginForm = () => {
           type="password"
           autoComplete="current-password"
           required
-          placeholder="Пароль"
+          placeholder={t('login.password')}
           isInvalid={authFailed}
           disabled={isLoading}
         />
-        <Form.Label htmlFor="password" className="form-label">Пароль</Form.Label>
-        <Form.Control.Feedback type="invalid">Неверное имя пользователя или пароль</Form.Control.Feedback>
+        <Form.Label htmlFor="password" className="form-label">{t('login.password')}</Form.Label>
+        <Form.Control.Feedback type="invalid">{t('login.error')}</Form.Control.Feedback>
       </Form.Group>
       <Button
         type="submit"
@@ -106,13 +106,14 @@ const LoginForm = () => {
         className="w-100 mb-3"
         disabled={isLoading}
       >
-        Войти
+        {t('login.come')}
       </Button>
     </Form>
   )
 };
 
 const Login = () => {
+  const { t } = useTranslation();
     return (
 			<div className="container-fluid h-100">
 				<div className="row justify-content-center align-content-center h-100">
@@ -120,13 +121,13 @@ const Login = () => {
 						<div className="card shadow-sm">
 							<div className="card-body row p-5">
 								<div className="col-12 col-md-6 d-flex align-items-center justify-content-center">
-									<img src={logo} className="rounded-circle" alt="Войти" />
+									<img src={logo} className="rounded-circle" alt={t('login.come')} />
 								</div>
 								<LoginForm />
 							</div>
 							<div className="card-footer p-4">
 								<div className="text-center">
-									<span>Нет аккаунта?</span> <a href="/signup">Регистрация</a>
+									<span>{t('login.doNotHaveAnAccount')}</span> <a href="/signup">{t('login.registration')}</a>
 								</div>
 							</div>
 						</div>

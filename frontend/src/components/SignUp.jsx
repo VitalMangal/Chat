@@ -4,6 +4,7 @@ import * as formik from 'formik';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 import _ from 'lodash';
 
@@ -20,20 +21,28 @@ const RegistrationForm = () => {
 	const inputRef = useRef();
   const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
+  const { t } = useTranslation();
+
+  const getErrorText = (formField, error) => {
+    if (!error) {
+      return null;
+    }
+    return t(`signUp.errors.${formField}.${error}`);
+  };
 
   const registrationFormSchema = yup.object().shape({
     username: yup
       .string()
-      .min(3, 'min3')
-      .max(20, 'max 20')
+      .min(3, 'length')
+      .max(20, 'length')
       .required('required'),
     password: yup
       .string()
-      .min(6, 'min 6')
+      .min(6, 'length')
       .required('required'),
     confirmPassword: yup
       .string()
-      .oneOf([yup.ref('password'), null], 'checkPassword')
+      .oneOf([yup.ref('password'), null], 'passwordsMustMatch')
       .required('required'),
   });
 
@@ -58,13 +67,12 @@ const RegistrationForm = () => {
     } catch (err) {
       setIsLoading(false);
       if (err.isAxiosError && err.response.status === 409) {
-        setSubmitError('Такой пользователь уже существует');
+        setSubmitError('submitError');
         inputRef.current.select();
         return;
       }
     throw err;
     }
-
   }
 
   return(
@@ -79,12 +87,12 @@ const RegistrationForm = () => {
     >
       {({ handleSubmit, handleChange, values, touched, errors }) => (
       <Form className="w-50" onSubmit={handleSubmit}>
-        <h1 className="text-center mb-4">Регистрация</h1>
+        <h1 className="text-center mb-4">{t('signUp.registration')}</h1>
         <Form.Group className="form-floating mb-3 position-relative">
           <Form.Control
             onChange={handleChange}
             value={values.username}
-            placeholder="От 3 до 20 символов"
+            placeholder={t('signUp.username')}
             name="username"
             autoComplete="username"
             id="username"
@@ -93,16 +101,16 @@ const RegistrationForm = () => {
             type="text"
             disabled={isLoading}
           />
-          <Form.Label>Имя пользователя</Form.Label>
+          <Form.Label>{t('signUp.username')}</Form.Label>
           <Form.Control.Feedback type="invalid" tooltip>
-            {errors.username}
+            {getErrorText('username', errors.username)}
           </Form.Control.Feedback>
         </Form.Group>
         <Form.Group className="form-floating mb-3 position-relative">
           <Form.Control
             onChange={handleChange}
             value={values.password}
-            placeholder="Не менее 6 символов"
+            placeholder={t('signUp.password')}
             name="password"
             aria-describedby="passwordHelpBlock"
             autoComplete="new-password"
@@ -112,15 +120,15 @@ const RegistrationForm = () => {
             disabled={isLoading}
           />
           <Form.Control.Feedback type="invalid" tooltip>
-            {errors.password}
+            {getErrorText('password', errors.password)}
           </Form.Control.Feedback>
-          <Form.Label>Пароль</Form.Label>
+          <Form.Label>{t('signUp.password')}</Form.Label>
         </Form.Group>
         <Form.Group className="form-floating mb-4 position-relative">
           <Form.Control
             onChange={handleChange}
             value={values.confirmPassword}
-            placeholder="Пароли должны совпадать"
+            placeholder={t('signUp.confirmPassword')}
             name="confirmPassword"
             autoComplete="new-password"
             type="password"
@@ -129,9 +137,9 @@ const RegistrationForm = () => {
             disabled={isLoading}
           />
           <Form.Control.Feedback type="invalid" tooltip>
-            {errors.confirmPassword || submitError}
+            {getErrorText('confirmPassword', errors.confirmPassword) || getErrorText('submitError', submitError)}
           </Form.Control.Feedback>
-          <Form.Label>Подтвердите пароль</Form.Label>
+          <Form.Label>{t('signUp.confirmPassword')}</Form.Label>
         </Form.Group>
         <Button
           disabled={isLoading}
@@ -139,7 +147,7 @@ const RegistrationForm = () => {
           variant="outline-primary"
           className="w-100"
         >
-          Зарегистрироваться
+          {t('signUp.register')}
         </Button>
       </Form>
             )}
@@ -155,7 +163,7 @@ const SignUp = () => {
           <div className="card shadow-sm">
             <div className="card-body d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
               <div>
-                <img src={regLogo} className="rounded-circle" alt="Регистрация" />
+                <img src={regLogo} className="rounded-circle" alt="registration" />
               </div>
               <RegistrationForm />
             </div>

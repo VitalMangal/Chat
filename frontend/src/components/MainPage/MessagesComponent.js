@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
+import { useTranslation } from 'react-i18next';
 import { Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 
@@ -13,6 +14,7 @@ import { selectorsMessages, addMessage, updateMessage, removeMessage, setMessage
 
 const MessageForm = ({ activeChannelId }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { t } = useTranslation();
 
 	const inputRef = useRef();
 	useEffect(() => {
@@ -27,7 +29,6 @@ const MessageForm = ({ activeChannelId }) => {
     },
     onSubmit: async (values) => {
       setIsLoading(true);
-      // console.log(values, 'values add message');
       try {
         const userData = JSON.parse(localStorage.getItem('userData'));
         const { token, username } = userData;
@@ -40,9 +41,9 @@ const MessageForm = ({ activeChannelId }) => {
         });
         formik.values.body = '';
         setIsLoading(false);
+        // не работает автофокус на поле ввода после отправки сообщения
         inputRef.current.focus();
       } catch (err) {
-        console.log(err, 'add message error');
         setIsLoading(false);
         formik.setSubmitting(false);
         // не знаю что это значит
@@ -63,8 +64,8 @@ const MessageForm = ({ activeChannelId }) => {
           value={formik.values.body}
           name="body"
           id="body"
-          aria-label="Новое сообщение"
-          placeholder="Введите сообщение..."
+          aria-label={t('messages.label')}
+          placeholder={t('messages.placeholder')}
           className="border-0 p-0 ps-2 form-control"
           ref={inputRef}
           type="text"
@@ -75,7 +76,7 @@ const MessageForm = ({ activeChannelId }) => {
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 16 16" width="20" height="20" fill="currentColor">
             <path fillRule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2zm4.5 5.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5z"></path>
           </svg>
-          <span className="visually-hidden">Отправить</span>
+          <span className="visually-hidden">{t('messages.send')}</span>
         </Button>
       </Form.Group>
     </Form>
@@ -86,6 +87,7 @@ const MessagesComponent = ({ activeChannelId }) => {
   console.log(activeChannelId, 'activeChannelId messageComponent')
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { t } = useTranslation();
 
   //получаем сообщения при входе
   useEffect(() => {
@@ -119,7 +121,7 @@ const MessagesComponent = ({ activeChannelId }) => {
           <p className="m-0">
             <b>{activeChannel?.name}</b>
           </p>
-          <span className="text-muted">{messagesFromActiveChannel.length} сообщений</span>
+          <span className="text-muted">{t('messages.mess', { count: messagesFromActiveChannel.length })}</span>
         </div>
         <div id="messages-box" className="chat-messages overflow-auto px-5 ">
           {messagesFromActiveChannel.map((message) => {
