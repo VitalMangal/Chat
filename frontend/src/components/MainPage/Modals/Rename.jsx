@@ -6,10 +6,11 @@ import * as yup from 'yup';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-import { selectorsChannels } from '../../../slices/channelsSlice.js';
+import { useGetChannelsQuery, useRenameChannelMutation } from '../../../redux/index.js'
 
 import routes from '../../../routes.js';
 
+/*
 const renameSubmit = (modalInfo, closeModal) => async (values) => {
   const userData = JSON.parse(localStorage.getItem('userData'));
   const { token } = userData;
@@ -19,7 +20,7 @@ const renameSubmit = (modalInfo, closeModal) => async (values) => {
     },
   })
   closeModal();  
-};
+};*/
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({
@@ -36,13 +37,24 @@ const getSchema = (channels) => {
 const Rename = ({ modalInfo, closeModal }) => {
   const { t } = useTranslation();
   const { Formik } = formik;
-  const channelsNames = useSelector(selectorsChannels.selectAll)
-    .map((channel) => channel.name);
+
+  const { data, error, isLoading, refetch } = useGetChannelsQuery();
+  const channelsNames = data.map((channel) => channel.name);
+
+  const [
+    renameChannel,
+    { data: response, error: addUserError, isLoading: isAddingUser },
+  ] = useRenameChannelMutation();
 
   const inputRef = useRef();
   useEffect(() => {
     inputRef.current.select();    
   }, []);
+
+  const handleSubmit = async (values) =>  {
+    await renameChannel(modalInfo.channel.id, values).unwrap();
+    closeModal();
+  };
 
   return (
     <Modal show aria-labelledby="contained-modal-title-vcenter" centered >
@@ -52,7 +64,7 @@ const Rename = ({ modalInfo, closeModal }) => {
       <Modal.Body>
         <Formik
           validationSchema={getSchema(channelsNames)}
-          onSubmit={renameSubmit(modalInfo, closeModal)}
+          onSubmit={handleSubmit}
           initialValues={{
             name: modalInfo.channel.name,
           }}

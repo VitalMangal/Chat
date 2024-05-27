@@ -10,7 +10,6 @@ import routes from '../../routes.js';
 import getModal from './Modals/index.js';
 
 import { selectorsChannels, setChannels, addChannel, updateChannel, removeChannel } from '../../slices/channelsSlice.js';
-import { useGetChannelsQuery } from '../../redux/index.js'
 
 const renderModal = (modalInfo, setActiveChannelId, closeModal) => {
   if (!modalInfo.type) {
@@ -24,13 +23,32 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { data, error, isLoading, refetch } = useGetChannelsQuery();
-  //добавить обработку ошибок и время загрузки
+
+  //получаем каналы при входе
+  useEffect(() => {
+    const getChannels = async () => {
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const { token } = userData;
+      try {
+        const response = await axios.get(routes.channelsPath(), {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        dispatch(setChannels(response.data));
+      } catch {
+        navigate('/login')
+      }
+    };
+    getChannels();
+  }, [])
 
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
 
   const openModal = (type, channel = null) => setModalInfo({type, channel });
   const closeModal = () => setModalInfo({ type: null, channel: null });
+  
+  const channels = useSelector(selectorsChannels.selectAll);
 
   return (
     <>
@@ -46,8 +64,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
           </button>
         </div>
         <ButtonToolbar vertical='true' id="channels-box" aria-label="" className='flex-column mb-3 px-2 text-truncate h-100 overflow-auto'>
-          {/*странное решение*/}
-          {data && data.map((channel) => {
+          {channels.map((channel) => {
             const btnClasses = cn('rounded-0', 'text-start', 'text-truncate');
             const buttonVariant = (channel.id === activeChannelId ? 'secondary' : 'light');
             if(!channel.removable) {

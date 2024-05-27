@@ -5,7 +5,7 @@ import { I18nextProvider } from 'react-i18next';
 import i18next from './i18next.js';
 
 import App from './App.js';
-import store from './slices/index.js';
+import { store } from './redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 import './style.css'

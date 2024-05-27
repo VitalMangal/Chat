@@ -6,9 +6,6 @@ import { io } from "socket.io-client";
 import ChannelsComponent from './ChannelsComponent.js';
 import MessagesComponent from './MessagesComponent.js';
 
-import {channelsApi} from '../../redux';
-import {messagesApi} from '../../redux';
-
 import { selectorsChannels, setChannels, addChannel, updateChannel, removeChannel } from '../../slices/channelsSlice.js';
 import { selectorsMessages, addMessage, updateMessage, removeMessage, setMessages } from '../../slices/messagesSlice.js';
 
@@ -34,30 +31,10 @@ const MainPage = () => {
   useEffect(() => {
     socket.on("connect", () => {
       console.log('user connected');
-      socket.on('newMessage', (payload) => {
-        dispatch(
-          messagesApi.util.upsertQueryData('getMessages', undefined, (draftMessages) => {
-            draftMessages.push(payload);
-          }),
-        )
-      });
-      socket.on('newChannel', (payload) => {
-        dispatch(
-          channelsApi.util.upsertQueryData('getChannels', undefined, (draftChannels) => {
-            draftChannels.push(payload);
-          }),
-        )
-      });
-      socket.on('removeChannel', (payload) => dispatch(
-        channelsApi.util.upsertQueryData('getChannels', undefined, (draftChannels) => {
-          draftChannels.filter((ch) => ch.id !== payload);
-        }),
-      ));
-      socket.on('renameChannel', (payload) => dispatch(
-        channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
-          Object.assign(draftChannels, payload)
-        }),
-      ))
+      socket.on('newMessage', (payload) => dispatch(addMessage(payload)));
+      socket.on('newChannel', (payload) => dispatch(addChannel(payload)));
+      socket.on('removeChannel', (payload) => dispatch(removeChannel(payload.id)));
+      socket.on('renameChannel', (payload) => dispatch(updateChannel({ id: payload.id, changes: payload })))
     });
   }, []);
 

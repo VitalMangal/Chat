@@ -1,10 +1,14 @@
 import React, { useEffect, useRef } from 'react';
 import * as formik from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
+import axios from 'axios';
 import * as yup from 'yup';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-import { useGetChannelsQuery, useAddChannelMutation } from '../../../redux'
+import { selectorsChannels } from '../../../slices/channelsSlice.js';
+
+import routes from '../../../routes.js';
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({
@@ -21,22 +25,23 @@ const getSchema = (channels) => {
 const Add = ({ setActiveChannelId, closeModal }) => {
   const { t } = useTranslation();
   const { Formik } = formik;
-  const { data, error, isLoading, refetch } = useGetChannelsQuery();
-  const channelsNames = data.map((channel) => channel.name);
+  const channelsNames = useSelector(selectorsChannels.selectAll)
+    .map((channel) => channel.name);
 
   const inputRef = useRef();
   useEffect(() => {
     inputRef.current.focus();
   }, []);
 
- //реализовать обработку ошибок и время загрузки
-  const [
-    addChannel,
-    { data: response, error: addUserError, isLoading: isAddingUser },
-  ] = useAddChannelMutation();
-
-  const handleSubmit = async (values) => {
-    await addChannel(values).unwrap();
+  const addChannel = async (values) => {
+    console.log(values, 'calues')
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    const { token } = userData;
+    const response = await axios.post(routes.channelsPath(), values, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
     await setActiveChannelId(response.data.id);
     closeModal();
   };
@@ -49,7 +54,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
       <Modal.Body>
         <Formik
           validationSchema={getSchema(channelsNames)}
-          onSubmit={handleSubmit}
+          onSubmit={addChannel}
           initialValues={{
             name: '',
           }}

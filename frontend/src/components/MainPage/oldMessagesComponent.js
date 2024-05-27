@@ -11,7 +11,6 @@ import routes from '../../routes.js';
 import { selectorsChannels, setChannels, addChannel, updateChannel, removeChannel } from '../../slices/channelsSlice.js';
 import { selectorsMessages, addMessage, updateMessage, removeMessage, setMessages } from '../../slices/messagesSlice.js';
 
-import { useGetChannelsQuery, useGetMessagesQuery, useAddMessageMutation, } from '../../redux/index.js'
 
 const MessageForm = ({ activeChannelId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -22,11 +21,6 @@ const MessageForm = ({ activeChannelId }) => {
     inputRef.current.focus();
   }, [activeChannelId]);
 
-  const [
-    addMessage,
-    { data: response, error: addUserError, isLoading: isAddingMessage },
-  ] = useAddMessageMutation();
-
 	const formik = useFormik({
     initialValues: {
       body: '',
@@ -35,16 +29,30 @@ const MessageForm = ({ activeChannelId }) => {
     },
     onSubmit: async (values) => {
       setIsLoading(true);
-      //поменять на получение username из api
-      const userData = JSON.parse(localStorage.getItem('userData'));
-      const { username } = userData;
-      formik.values.username = username;
-      formik.values.channelId = activeChannelId;
-      await addMessage(values).unwrap();
-      formik.values.body = '';
-      setIsLoading(false);
+      try {
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const { token, username } = userData;
+        formik.values.username = username;
+        formik.values.channelId = activeChannelId;
+        const res = await axios.post(routes.messagesPath(), values, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+        formik.values.body = '';
+        setIsLoading(false);
         // не работает автофокус на поле ввода после отправки сообщения
-      inputRef.current.focus();
+        inputRef.current.focus();
+      } catch (err) {
+        setIsLoading(false);
+        formik.setSubmitting(false);
+        // не знаю что это значит
+        if (err.isAxiosError && err.response.status === 401) {
+          inputRef.current.select();
+          return;
+        }
+        throw err;
+      }
     },
   });
 
@@ -80,12 +88,31 @@ const MessagesComponent = ({ activeChannelId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { data: messages } = useGetMessagesQuery();
-  const { data: channels } = useGetChannelsQuery();
-  
-  const activeChannel = !!channels ? channels.filter((channel) => channel.id === activeChannelId ) : [];
 
-  const messagesFromActiveChannel = !!messages ? messages.filter((mess) => mess.channelId === activeChannelId) : [];
+  //получаем сообщения при входе
+  useEffect(() => {
+    const getMessages = async () => {
+      const userData = JSON.parse(localStorage.getItem('userData'));
+      const { token } = userData;
+      try {
+      const response = await axios.get(routes.messagesPath(), {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      dispatch(setMessages(response.data));
+      } catch {
+        navigate('/login')
+      }
+
+    };
+    getMessages();
+  }, [])
+
+  const activeChannel = useSelector((state) => selectorsChannels.selectById(state, activeChannelId));
+
+  const messagesFromActiveChannel = useSelector(selectorsMessages.selectAll)
+    .filter((mess) => mess.channelId === activeChannelId);
 
   return (
     <div className="col p-0 h-100">

@@ -3,8 +3,6 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 
-import { useRemoveChannelMutation } from '../../../redux/index.js'
-
 import routes from '../../../routes.js';
 
 const defaultChannelId = '1';
@@ -12,16 +10,17 @@ const defaultChannelId = '1';
 //не работает по нажатию клавиши Enter
 const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
   const { t } = useTranslation();
-   //реализовать обработку ошибок и время загрузки
-   const [
-    removeChannel,
-    { data: response, error: addUserError, isLoading: isAddingUser },
-  ] = useRemoveChannelMutation();
 
   const handleSubmit = async (e) =>  {
     e.preventDefault();
-    await removeChannel(modalInfo.channel.id).unwrap();
-    setActiveChannelId(defaultChannelId);
+    const userData = JSON.parse(localStorage.getItem('userData'));
+    const { token } = userData;
+    await axios.delete(routes.changeChannelPath(modalInfo.channel.id), {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    })
+    await setActiveChannelId(defaultChannelId);
     closeModal();
   };
 
