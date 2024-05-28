@@ -9,7 +9,6 @@ import cn from 'classnames';
 import routes from '../../routes.js';
 import getModal from './Modals/index.js';
 
-import { selectorsChannels, setChannels, addChannel, updateChannel, removeChannel } from '../../slices/channelsSlice.js';
 import { useGetChannelsQuery } from '../../redux/index.js'
 
 const renderModal = (modalInfo, setActiveChannelId, closeModal) => {

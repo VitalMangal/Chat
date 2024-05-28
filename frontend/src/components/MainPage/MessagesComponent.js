@@ -8,9 +8,6 @@ import axios from 'axios';
 
 import routes from '../../routes.js';
 
-import { selectorsChannels, setChannels, addChannel, updateChannel, removeChannel } from '../../slices/channelsSlice.js';
-import { selectorsMessages, addMessage, updateMessage, removeMessage, setMessages } from '../../slices/messagesSlice.js';
-
 import { useGetChannelsQuery, useGetMessagesQuery, useAddMessageMutation, } from '../../redux/index.js'
 
 const MessageForm = ({ activeChannelId }) => {

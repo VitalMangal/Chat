@@ -2,7 +2,7 @@ import AuthContext from './AuthContext.js';
 import React, { useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import { removeUser } from '../slices/userSlice.js';
+import { removeUser } from '../redux/userSlice.js';
 
 const AuthProvider = ({ children }) => {
   const dispatch = useDispatch();

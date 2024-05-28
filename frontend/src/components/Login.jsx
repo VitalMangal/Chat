@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import * as Yup from 'yup';
 import _ from 'lodash';
 
-import { selectors, setUser, removeUser } from '../slices/userSlice.js';
+import { selectors, setUser, removeUser } from '../redux/userSlice.js';
 import logo from '../pictures/loginImg.jpeg';
 import authContext from '../context/AuthContext.js';
 import routes from '../routes.js';
