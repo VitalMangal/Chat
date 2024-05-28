@@ -12,6 +12,7 @@ import {messagesApi} from '../../redux';
 import { selectorsChannels, setChannels, addChannel, updateChannel, removeChannel } from '../../slices/channelsSlice.js';
 import { selectorsMessages, addMessage, updateMessage, removeMessage, setMessages } from '../../slices/messagesSlice.js';
 
+import { useGetChannelsQuery, useGetMessagesQuery, useAddMessageMutation, } from '../../redux/index.js'
   // const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5001';
   // const socket = io(URL);
 const socket = io();
@@ -20,6 +21,7 @@ const defaultActiveChannelId = '1';
 const MainPage = () => {
   const [activeChannelId, setActiveChannelId] = useState(defaultActiveChannelId);
   const dispatch = useDispatch();
+  const { data, error, isLoading, refetch } = useGetMessagesQuery;
 
   //не совсем понял необходимость этого блока
   useEffect(() => {
@@ -35,6 +37,7 @@ const MainPage = () => {
     socket.on("connect", () => {
       console.log('user connected');
       socket.on('newMessage', (payload) => {
+        console.log(payload, 'payload newMess');
         dispatch(
           messagesApi.util.upsertQueryData('getMessages', undefined, (draftMessages) => {
             draftMessages.push(payload);

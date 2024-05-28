@@ -36,8 +36,8 @@ const Add = ({ setActiveChannelId, closeModal }) => {
   ] = useAddChannelMutation();
 
   const handleSubmit = async (values) => {
-    await addChannel(values).unwrap();
-    await setActiveChannelId(response.data.id);
+    const resp = await addChannel(values);
+    setActiveChannelId(resp.data.id);
     closeModal();
   };
 

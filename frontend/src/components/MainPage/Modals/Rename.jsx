@@ -39,11 +39,12 @@ const Rename = ({ modalInfo, closeModal }) => {
   const { Formik } = formik;
 
   const { data, error, isLoading, refetch } = useGetChannelsQuery();
+  console.log(data, 'channels rename map');
   const channelsNames = data.map((channel) => channel.name);
 
   const [
     renameChannel,
-    { data: response, error: addUserError, isLoading: isAddingUser },
+    { data:response, error: addUserError, isLoading: isAddingUser },
   ] = useRenameChannelMutation();
 
   const inputRef = useRef();
@@ -52,7 +53,7 @@ const Rename = ({ modalInfo, closeModal }) => {
   }, []);
 
   const handleSubmit = async (values) =>  {
-    await renameChannel(modalInfo.channel.id, values).unwrap();
+    const resp = await renameChannel({id: modalInfo.channel.id, body: values}).unwrap();
     closeModal();
   };
 

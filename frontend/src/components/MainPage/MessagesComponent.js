@@ -76,12 +76,12 @@ const MessageForm = ({ activeChannelId }) => {
 };
 
 const MessagesComponent = ({ activeChannelId }) => {
-  console.log(activeChannelId, 'activeChannelId messageComponent')
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { data: messages } = useGetMessagesQuery();
   const { data: channels } = useGetChannelsQuery();
+  console.log(messages, 'messages from mess');
   
   const activeChannel = !!channels ? channels.filter((channel) => channel.id === activeChannelId ) : [];
 
