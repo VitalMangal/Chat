@@ -45,6 +45,7 @@ const MainPage = () => {
         )
       });
       socket.on('newChannel', (payload) => {
+        if (username === payload.username) return;
         console.log(payload, 'payload newChannel');
         dispatch(
           channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
@@ -63,8 +64,7 @@ const MainPage = () => {
             if (ch.id === payload.id) {
               Object.assign(ch, payload)
             }
-          })
-          
+          })          
         }),
       ))
     });
