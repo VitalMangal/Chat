@@ -25,7 +25,6 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
   const { t } = useTranslation();
   const { data, error, isLoading, refetch } = useGetChannelsQuery();
   //добавить обработку ошибок и время загрузки
-  console.log(data, 'dat from chann');
 
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
 

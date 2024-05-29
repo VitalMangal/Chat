@@ -14,28 +14,18 @@ export const channelsApi = createApi({
       return headers
     },
   }),
-  //tagTypes: ['Channels'],
+  tagTypes: ['Channels'],
   endpoints: (builder) => ({
     getChannels: builder.query({
       query: () => '',
-      //providesTags: ['Channels'],
+      providesTags: ['Channels'],
     }),
     addChannel: builder.mutation({
       query: (channel) => ({
         method: 'POST',
         body: channel,
       }),
-      //invalidatesTags: ['Channels'],
-      async onQueryStarted(channel, { dispatch, queryFulfilled }) {
-        try {
-          const { data: newChannel } = await queryFulfilled
-          const patchResult = dispatch(
-            channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
-              draftChannels.push(newChannel);
-            }),
-          )
-        } catch {}
-      },
+      invalidatesTags: ['Channels'],
     }),
     renameChannel: builder.mutation({
       query: ({id, body}) => ({
@@ -43,36 +33,14 @@ export const channelsApi = createApi({
         method: 'PATCH',
         body,
       }),
-      //invalidatesTags: ['Channels'],
-      /*async onQueryStarted({id, body}, { dispatch, queryFulfilled }) {
-        try {
-          const { data: newChannel } = await queryFulfilled;
-          const patchResult = dispatch(
-          channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
-            draftChannels.map((ch) => {
-              if (ch.id === newChannel.id) {
-                Object.assign(ch, newChannel)
-              }
-            })          
-          }))     
-        } catch {}
-      },*/
+      invalidatesTags: ['Channels'],
     }),
     removeChannel: builder.mutation({
       query: (id) => ({
         url: id,
         method: 'DELETE',
       }),
-      //invalidatesTags: ['Channels', 'Messages'],
-     /* async onQueryStarted(id, { dispatch, queryFulfilled }) {
-        try {
-          const { id: removeId } = await queryFulfilled;
-          const patchResult = dispatch(
-          channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
-            draftChannels.filter((ch) => ch.id !== removeId)          
-          }))     
-        } catch {}
-      },*/
+      invalidatesTags: ['Channels', 'Messages'],
     }),
   }),
 });

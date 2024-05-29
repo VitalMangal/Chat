@@ -18,7 +18,8 @@ const defaultActiveChannelId = '1';
 const MainPage = () => {
   const [activeChannelId, setActiveChannelId] = useState(defaultActiveChannelId);
   const dispatch = useDispatch();
-  const { data, error, isLoading, refetch } = useGetMessagesQuery;
+  //const { data: messages } = useGetMessagesQuery;
+  const { data, error, isLoading, refetch } = useGetChannelsQuery();
 
   const userData = JSON.parse(localStorage.getItem('userData'));
   const { username } = userData;
@@ -38,14 +39,16 @@ const MainPage = () => {
       console.log('user connected');
       socket.on('newMessage', (payload) => {
         console.log(payload, 'payload newMess');
-        dispatch(
+        //if (messages.includes(payload)) return;
+        const patchCollection = dispatch(
           messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
             draftMessages.push(payload);
           }),
         )
       });
       socket.on('newChannel', (payload) => {
-        if (username === payload.username) return;
+        console.log(payload, 'channels add');
+        if (data.includes(payload)) return;
         console.log(payload, 'payload newChannel');
         dispatch(
           channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
