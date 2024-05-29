@@ -20,6 +20,9 @@ const MainPage = () => {
   const dispatch = useDispatch();
   const { data, error, isLoading, refetch } = useGetMessagesQuery;
 
+  const userData = JSON.parse(localStorage.getItem('userData'));
+  const { username } = userData;
+
   //не совсем понял необходимость этого блока
   useEffect(() => {
     // no-op if the socket is already connected
@@ -42,6 +45,7 @@ const MainPage = () => {
         )
       });
       socket.on('newChannel', (payload) => {
+        console.log(payload, 'payload newChannel');
         dispatch(
           channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
             draftChannels.push(payload);
