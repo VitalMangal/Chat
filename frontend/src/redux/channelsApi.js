@@ -14,7 +14,7 @@ export const channelsApi = createApi({
       return headers
     },
   }),
-  tagTypes: ['Channels'],
+  // tagTypes: ['Channels'],
   endpoints: (builder) => ({
     getChannels: builder.query({
       query: () => '',
@@ -25,7 +25,7 @@ export const channelsApi = createApi({
         method: 'POST',
         body: channel,
       }),
-      invalidatesTags: ['Channels'],
+      // invalidatesTags: ['Channels'],
     }),
     renameChannel: builder.mutation({
       query: ({id, body}) => ({
