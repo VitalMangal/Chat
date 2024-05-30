@@ -14,18 +14,15 @@ export const messagesApi = createApi({
       return headers
     },
   }),
-  // tagTypes: ['Messages'],
   endpoints: (builder) => ({
     getMessages: builder.query({
       query: () => '',
-      // providesTags: ['Channels', 'Messages'],
     }),
     addMessage: builder.mutation({
       query: (message) => ({
         method: 'POST',
         body: message,
       }),
-      // invalidatesTags: ['Messages'],
     }),
     editMessage: builder.mutation({
       query: (id, message) => ({
@@ -33,14 +30,12 @@ export const messagesApi = createApi({
         method: 'PATCH',
         body: message,
       }),
-      // invalidatesTags: ['Messages'],
     }),
     removeMessage: builder.mutation({
       query: (id) => ({
         url: id,
         method: 'DELETE',
       }),
-      // invalidatesTags: ['Messages'],
     }),
   }),
 });
