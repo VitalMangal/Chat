@@ -8,7 +8,8 @@ import { toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useGetChannelsQuery, useGetMessagesQuery, useAddMessageMutation, } from '../../redux/index.js'
+import { useGetChannelsQuery, useGetMessagesQuery, useAddMessageMutation, } from '../../redux/index.js';
+import filter from '../../leo-profanity.js'
 
 const MessageForm = ({ activeChannelId }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -39,6 +40,8 @@ const MessageForm = ({ activeChannelId }) => {
         const { username } = userData;
         formik.values.username = username;
         formik.values.channelId = activeChannelId;
+        const filteredMessag = filter.clean(formik.values.body);
+        formik.values.body = filteredMessag;
         await addMessage(values).unwrap();
         formik.values.body = '';
         setIsLoading(false);

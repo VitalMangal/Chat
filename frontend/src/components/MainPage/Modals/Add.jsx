@@ -7,7 +7,8 @@ import { toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useGetChannelsQuery, useAddChannelMutation } from '../../../redux'
+import { useGetChannelsQuery, useAddChannelMutation } from '../../../redux';
+import filter from '../../../leo-profanity';
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({
@@ -43,7 +44,8 @@ const Add = ({ setActiveChannelId, closeModal }) => {
   const handleSubmit = async (values) => {
     setIsLoading(true);
     try{
-      const resp = await addChannel(values);
+      const filtered = filter.clean(values.name)
+      const resp = await addChannel({name: filtered});
       setActiveChannelId(resp.data.id);
       closeModal();
       setIsLoading(false);
