@@ -4,7 +4,6 @@ import MainPage from './components/MainPage';
 import PageNotFound from './components/PageNotFound';
 import AuthButton from './components/AuthButton';
 
-import AuthProvider from './context/AuthProvider.js';
 import authContext from './context/AuthContext.js';
 
 import {
@@ -17,6 +16,7 @@ import {
 } from 'react-router-dom';
 import React, { useContext } from 'react';
 import { Navbar } from 'react-bootstrap';
+import { ToastContainer } from 'react-toastify';
 
 const PrivateRoute = ({ children }) => {
   const location = useLocation();
@@ -29,7 +29,7 @@ const PrivateRoute = ({ children }) => {
 // проблема с расположением бренда, кнопки Log In, и положением формы для авторизации(из-за body)
 function App() {
   return (
-    <AuthProvider>
+    <>
       <div className="d-flex flex-column h-100">
         <BrowserRouter>
           <Navbar bg="white" expand="lg" className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
@@ -53,7 +53,19 @@ function App() {
           </Routes>
         </BrowserRouter>
       </div>
-    </AuthProvider>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
+    </>
   );
 }
 

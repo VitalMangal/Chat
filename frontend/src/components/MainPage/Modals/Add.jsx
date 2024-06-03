@@ -1,8 +1,11 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import * as formik from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
+import { ToastContainer, toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 import { useGetChannelsQuery, useAddChannelMutation } from '../../../redux'
 
@@ -19,9 +22,10 @@ const getSchema = (channels) => {
 };
 
 const Add = ({ setActiveChannelId, closeModal }) => {
+  const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   const { Formik } = formik;
-  const { data, error, isLoading, refetch } = useGetChannelsQuery();
+  const { data, error, refetch } = useGetChannelsQuery();
   //нужна обработка ошибок, но как ее выполнить?
   const channelsNames = data.map((channel) => channel.name);
 

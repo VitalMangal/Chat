@@ -23,7 +23,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
-  const { data, error, isLoading, refetch } = useGetChannelsQuery();
+  const { data = [], error, isLoading, refetch } = useGetChannelsQuery();
   //добавить обработку ошибок и время загрузки
 
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
@@ -46,7 +46,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
         </div>
         <ButtonToolbar vertical='true' id="channels-box" aria-label="" className='flex-column mb-3 px-2 text-truncate h-100 overflow-auto'>
           {/*странное решение*/}
-          {data && data.map((channel) => {
+          {data.map((channel) => {
             const btnClasses = cn('rounded-0', 'text-start', 'text-truncate');
             const buttonVariant = (channel.id === activeChannelId ? 'secondary' : 'light');
             if(!channel.removable) {

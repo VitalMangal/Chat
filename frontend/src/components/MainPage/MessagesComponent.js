@@ -84,13 +84,13 @@ const MessagesComponent = ({ activeChannelId }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   //нужна обработка ошибок, но как ее выполнить?
-  const { data: messages } = useGetMessagesQuery();
-  const { data: channels } = useGetChannelsQuery();
+  const { data: messages = [] } = useGetMessagesQuery();
+  const { data: channels = [] } = useGetChannelsQuery();
   console.log(messages, 'messages from mess');
   
-  const activeChannel = !!channels ? channels.filter((channel) => channel.id === activeChannelId ) : [];
+  const activeChannel = channels.filter((channel) => channel.id === activeChannelId );
 
-  const messagesFromActiveChannel = !!messages ? messages.filter((mess) => mess.channelId === activeChannelId) : [];
+  const messagesFromActiveChannel = messages.filter((mess) => mess.channelId === activeChannelId);
 
   return (
     <div className="col p-0 h-100">
