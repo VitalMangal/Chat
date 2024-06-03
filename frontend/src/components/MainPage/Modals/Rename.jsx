@@ -53,6 +53,7 @@ const Rename = ({ modalInfo, closeModal }) => {
   }, []);
 
   const handleSubmit = async (values) =>  {
+    //нужна обработка ошибок, но как ее выполнить?
     const resp = await renameChannel({id: modalInfo.channel.id, body: values}).unwrap();
     closeModal();
   };

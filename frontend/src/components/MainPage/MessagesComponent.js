@@ -21,7 +21,7 @@ const MessageForm = ({ activeChannelId }) => {
 
   const [
     addMessage,
-    { data: response, error: addUserError, isLoading: isAddingMessage },
+    { error },
   ] = useAddMessageMutation();
 
 	const formik = useFormik({
@@ -31,17 +31,24 @@ const MessageForm = ({ activeChannelId }) => {
       username: '',
     },
     onSubmit: async (values) => {
+      //нужна обработка ошибок, но как ее выполнить?
       setIsLoading(true);
-      //поменять на получение username из api
-      const userData = JSON.parse(localStorage.getItem('userData'));
-      const { username } = userData;
-      formik.values.username = username;
-      formik.values.channelId = activeChannelId;
-      await addMessage(values).unwrap();
-      formik.values.body = '';
-      setIsLoading(false);
-        // не работает автофокус на поле ввода после отправки сообщения
-      inputRef.current.focus();
+      try{
+        //поменять на получение username из api
+        const userData = JSON.parse(localStorage.getItem('userData'));
+        const { username } = userData;
+        formik.values.username = username;
+        formik.values.channelId = activeChannelId;
+        await addMessage(values).unwrap();
+        formik.values.body = '';
+        setIsLoading(false);
+          // не работает автофокус на поле ввода после отправки сообщения
+        inputRef.current.focus();
+      } catch (err) {
+        setIsLoading(false);
+        alert(`${error.status}: ${JSON.stringify(error.data)}`);
+      }
+
     },
   });
 
@@ -76,6 +83,7 @@ const MessagesComponent = ({ activeChannelId }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { t } = useTranslation();
+  //нужна обработка ошибок, но как ее выполнить?
   const { data: messages } = useGetMessagesQuery();
   const { data: channels } = useGetChannelsQuery();
   console.log(messages, 'messages from mess');

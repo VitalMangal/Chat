@@ -10,15 +10,16 @@ import {channelsApi} from '../../redux';
 import {messagesApi} from '../../redux';
 
 import { useGetChannelsQuery, useGetMessagesQuery, useAddMessageMutation, } from '../../redux/index.js'
-  // const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:5001';
+  const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:3000';
   // const socket = io(URL);
-const socket = io();
+const socket = io(URL, {
+  autoConnect: false
+});
 const defaultActiveChannelId = '1';
 
 const MainPage = () => {
   const [activeChannelId, setActiveChannelId] = useState(defaultActiveChannelId);
   const dispatch = useDispatch();
-  //const { data: messages } = useGetMessagesQuery;
   const { data, error, isLoading, refetch } = useGetChannelsQuery();
 
   const userData = JSON.parse(localStorage.getItem('userData'));
@@ -26,7 +27,6 @@ const MainPage = () => {
 
   //не совсем понял необходимость этого блока
   useEffect(() => {
-    // no-op if the socket is already connected
     socket.connect();
 
     return () => {
@@ -40,7 +40,6 @@ const MainPage = () => {
     });
     socket.on('newMessage', (payload) => {
       console.log(payload, 'payload newMess');
-      //if (messages.includes(payload)) return;
       const patchCollection = dispatch(
         messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
           draftMessages.push(payload);
@@ -57,7 +56,8 @@ const MainPage = () => {
     });
     socket.on('removeChannel', (payload) => dispatch(
       channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
-        draftChannels.filter((ch) => ch.id !== payload);
+        const index = draftChannels.findIndex(ch => ch.id === payload);
+        draftChannels.splice(index, 1);
       }),
     ));
     socket.on('renameChannel', (payload) => dispatch(
@@ -69,6 +69,14 @@ const MainPage = () => {
         })          
       }),
     ));
+
+    return () => {
+      socket.off('connect');
+      socket.off('newMessage');
+      socket.off('newChannel');
+      socket.off('removeChannel');
+      socket.off('renameChannel');
+    };
   }, []);
 
   return (

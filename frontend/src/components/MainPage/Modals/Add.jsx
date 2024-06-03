@@ -22,6 +22,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
   const { t } = useTranslation();
   const { Formik } = formik;
   const { data, error, isLoading, refetch } = useGetChannelsQuery();
+  //нужна обработка ошибок, но как ее выполнить?
   const channelsNames = data.map((channel) => channel.name);
 
   const inputRef = useRef();
@@ -36,6 +37,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
   ] = useAddChannelMutation();
 
   const handleSubmit = async (values) => {
+    //нужна обработка ошибок, но как ее выполнить?
     const resp = await addChannel(values);
     setActiveChannelId(resp.data.id);
     closeModal();

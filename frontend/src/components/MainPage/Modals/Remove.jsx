@@ -19,6 +19,7 @@ const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
   ] = useRemoveChannelMutation();
 
   const handleSubmit = async (e) =>  {
+    //нужна обработка ошибок, но как ее выполнить?
     e.preventDefault();
     await removeChannel(modalInfo.channel.id).unwrap();
     setActiveChannelId(defaultChannelId);
