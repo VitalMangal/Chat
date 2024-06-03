@@ -4,9 +4,9 @@ import { useNavigate } from 'react-router-dom';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Button, Form } from 'react-bootstrap';
-import axios from 'axios';
+import { toast } from 'react-toastify';
 
-import routes from '../../routes.js';
+import 'react-toastify/dist/ReactToastify.css';
 
 import { useGetChannelsQuery, useGetMessagesQuery, useAddMessageMutation, } from '../../redux/index.js'
 
@@ -45,8 +45,9 @@ const MessageForm = ({ activeChannelId }) => {
           // не работает автофокус на поле ввода после отправки сообщения
         inputRef.current.focus();
       } catch (err) {
+        console.log(err);
         setIsLoading(false);
-        alert(`${error.status}: ${JSON.stringify(error.data)}`);
+        toast.error(t('messages.errors.send'));
       }
 
     },
@@ -84,9 +85,13 @@ const MessagesComponent = ({ activeChannelId }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   //нужна обработка ошибок, но как ее выполнить?
-  const { data: messages = [] } = useGetMessagesQuery();
+  const { data: messages = [], error } = useGetMessagesQuery();
   const { data: channels = [] } = useGetChannelsQuery();
   console.log(messages, 'messages from mess');
+
+  if (error) {
+    toast.error(t('messages.errors.loading'));
+  }
   
   const activeChannel = channels.filter((channel) => channel.id === activeChannelId );
 

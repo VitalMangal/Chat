@@ -10,6 +10,9 @@ import routes from '../../routes.js';
 import getModal from './Modals/index.js';
 
 import { useGetChannelsQuery } from '../../redux/index.js'
+import { toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 const renderModal = (modalInfo, setActiveChannelId, closeModal) => {
   if (!modalInfo.type) {
@@ -24,6 +27,9 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const { data = [], error, isLoading, refetch } = useGetChannelsQuery();
+  if (error) {
+    toast.error(t('channels.error'));
+  }
   //добавить обработку ошибок и время загрузки
 
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });

@@ -1,17 +1,19 @@
-import React from 'react';
+import React, {useState} from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import axios from 'axios';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'react-toastify';
+
+import 'react-toastify/dist/ReactToastify.css';
 
 import { useRemoveChannelMutation } from '../../../redux/index.js'
-
-import routes from '../../../routes.js';
 
 const defaultChannelId = '1';
 
 //не работает по нажатию клавиши Enter
 const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
   const { t } = useTranslation();
+  const [isLoading, setIsLoading] = useState(false);
    //реализовать обработку ошибок и время загрузки
    const [
     removeChannel,
@@ -21,9 +23,19 @@ const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
   const handleSubmit = async (e) =>  {
     //нужна обработка ошибок, но как ее выполнить?
     e.preventDefault();
-    await removeChannel(modalInfo.channel.id).unwrap();
-    setActiveChannelId(defaultChannelId);
-    closeModal();
+    setIsLoading(true);
+    try {
+      await removeChannel(modalInfo.channel.id).unwrap();
+      setActiveChannelId(defaultChannelId);
+      setIsLoading(false);
+      closeModal();
+      toast.success(t('modal.remove.removed'));
+    } catch (err) {
+      console.log(err);
+      setIsLoading(false);
+      toast.error(t('modal.remove.notRemoved'));
+    }
+
   };
 
   return (
@@ -35,8 +47,21 @@ const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
       <p className="lead">{t('modal.remove.body')}</p>
         <Form onSubmit={handleSubmit}>
           <Form.Group  className="mt-2 d-flex justify-content-end">
-            <Button className="me-2" variant="secondary" onClick={closeModal}>{t('modal.remove.cancel')}</Button>
-            <Button type="submit" variant="danger">{t('modal.remove.send')}</Button>
+            <Button 
+              className="me-2"
+              variant="secondary"
+              onClick={closeModal}
+              disabled={isLoading}
+            >
+              {t('modal.remove.cancel')}
+            </Button>
+            <Button
+              type="submit"
+              variant="danger"
+              disabled={isLoading}
+            >
+              {t('modal.remove.send')}
+            </Button>
           </Form.Group>
         </Form>
       </Modal.Body>

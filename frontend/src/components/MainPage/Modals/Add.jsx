@@ -3,7 +3,7 @@ import * as formik from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 
@@ -41,10 +41,19 @@ const Add = ({ setActiveChannelId, closeModal }) => {
   ] = useAddChannelMutation();
 
   const handleSubmit = async (values) => {
-    //нужна обработка ошибок, но как ее выполнить?
-    const resp = await addChannel(values);
-    setActiveChannelId(resp.data.id);
-    closeModal();
+    setIsLoading(true);
+    try{
+      const resp = await addChannel(values);
+      setActiveChannelId(resp.data.id);
+      closeModal();
+      setIsLoading(false);
+      toast.success(t('modal.add.added'));
+    } catch (err) {
+    //Обработка ошибок либо тут, либо через мидлвару
+      console.log(err);
+      setIsLoading(false);
+      toast.error(t('modal.add.errors.notAdded'));
+    }
   };
 
   return (
@@ -72,13 +81,27 @@ const Add = ({ setActiveChannelId, closeModal }) => {
               id="name"
               isInvalid={touched.name && !!errors.name}
               type="text"
+              disabled={isLoading}
             />
             <Form.Label htmlFor="name" visuallyHidden>{t('modal.add.label')}</Form.Label>
             <Form.Control.Feedback type="invalid">{!!errors.name ? t(`modal.add.errors.${errors.name}`) : null}</Form.Control.Feedback>
           </Form.Group>
           <Form.Group  className="mt-2 d-flex justify-content-end">
-            <Button className="me-2" variant="secondary" onClick={closeModal}>{t('modal.add.cancel')}</Button>
-            <Button type="submit" variant="primary">{t('modal.add.send')}</Button>
+            <Button 
+              className="me-2"
+              variant="secondary"
+              onClick={closeModal}
+              disabled={isLoading}
+            >
+              {t('modal.add.cancel')}
+            </Button>
+            <Button 
+              type="submit" 
+              variant="primary"
+              disabled={isLoading}
+            >
+              {t('modal.add.send')}
+            </Button>
           </Form.Group>
         </Form>
         )}
