@@ -6,7 +6,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 import authContext from '../../context/AuthContext.js';
-import { useLoginUserMutation } from '../../redux/index.js';
+import { useLoginUserMutation } from '../../redux';
 
 const LoginForm = () => {
   const [ loginUser ] = useLoginUserMutation();
@@ -32,28 +32,29 @@ const LoginForm = () => {
       password: '',
     },
 		validationSchema: formSchema,
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
       setIsLoading(true);
+      setAuthFailed(false);
 
-      try {
-        setAuthFailed(false);
-				const res = await loginUser(values);
-        const { data } = res;
-        const newData = {...data, userLoggedIn: true};
-				localStorage.setItem('userData', JSON.stringify(newData));
-				auth.logIn();
-        setIsLoading(false);
-				navigate("/");
-      } catch (err) {
-        setIsLoading(false);
-        formik.setSubmitting(false);
-        if ( err.response.status === 401) {
-          setAuthFailed(true);
-          inputRef.current.select();
-          return;
-        }
-        throw err;
-      }
+      loginUser(values).unwrap()
+        .then((response) => {
+          const newData = {...response, userLoggedIn: true};
+          localStorage.setItem('userData', JSON.stringify(newData));
+          auth.logIn();
+          setIsLoading(false);
+          navigate("/");
+        })
+        .catch((error) => {
+          console.log(error, 'err Login');
+          setIsLoading(false);
+          formik.setSubmitting(false);
+            if ( error.status === 401) {
+            setAuthFailed(true);
+            inputRef.current.select();
+            return;
+            }
+          throw error;
+        })
     },
   });
 

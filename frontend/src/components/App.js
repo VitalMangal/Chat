@@ -1,10 +1,10 @@
-import Login from './components/Login/Login.jsx';
-import SignUp from './components/SignUp.jsx';
-import MainPage from './components/MainPage';
-import PageNotFound from './components/PageNotFound';
-import AuthButton from './components/AuthButton';
+import Login from './Login/Login.jsx';
+import SignUp from './SignUp/SignUp.jsx';
+import MainPage from './MainPage/MainPage.jsx';
+import PageNotFound from './PageNotFound.jsx';
+import AuthButton from './AuthButton.js';
 
-import authContext from './context/AuthContext.js';
+import authContext from '../context/AuthContext.js';
 
 import {
   BrowserRouter,
@@ -17,6 +17,7 @@ import {
 import React, { useContext } from 'react';
 import { Navbar } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
+import { useTranslation } from 'react-i18next';
 
 const PrivateRoute = ({ children }) => {
   const location = useLocation();
@@ -26,15 +27,15 @@ const PrivateRoute = ({ children }) => {
     auth.loggedIn ? children : <Navigate to="/login" state={{ from: location }} />
   );
 };
-// проблема с расположением бренда, кнопки Log In, и положением формы для авторизации(из-за body)
 function App() {
+  const { t } = useTranslation();
   return (
     <>
       <div className="d-flex flex-column h-100">
         <BrowserRouter>
           <Navbar bg="white" expand="lg" className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
             <div className='container'>
-              <Navbar.Brand as={Link} to="/">Hexlet Chat</Navbar.Brand>
+              <Navbar.Brand as={Link} to="/">{t('app.label')}</Navbar.Brand>
               <AuthButton />
             </div>
           </Navbar>

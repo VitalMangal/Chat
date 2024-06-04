@@ -2,11 +2,11 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { I18nextProvider } from 'react-i18next';
-import i18next from './i18next.js';
+import i18next from './assets/i18next.js';
 import AuthProvider from './context/AuthProvider.js';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react'; 
 
-import App from './App.js';
+import App from './components/App.js';
 import { store } from './redux';
 import 'bootstrap/dist/css/bootstrap.min.css';
 

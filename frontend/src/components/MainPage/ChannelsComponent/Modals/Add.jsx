@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { useGetChannelsQuery, useAddChannelMutation } from '../../../../redux';
-import filter from '../../../../leo-profanity';
+import filter from '../../../../assets/leo-profanity';
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({

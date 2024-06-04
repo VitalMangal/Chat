@@ -25,7 +25,6 @@ const MainPage = () => {
       console.log('user connected');
     });
     socket.on('newMessage', (payload) => {
-      console.log(payload, 'payload newMess');
       dispatch(
         messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
           draftMessages.push(payload);

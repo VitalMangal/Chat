@@ -1,18 +1,6 @@
-import axios from 'axios';
-import React, {useEffect, useRef, useState, useContext} from 'react';
-import { useFormik } from 'formik';
-import { Button, Form } from 'react-bootstrap';
-import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
-import * as Yup from 'yup';
-import _ from 'lodash';
-
-import { selectors, setUser, removeUser } from '../../redux/userSlice.js';
 import logo from '../../pictures/loginImg.jpeg';
-import authContext from '../../context/AuthContext.js';
-import routes from '../../routes.js';
-import { useLoginUserMutation } from '../../redux/index.js';
 import LoginForm from './LoginForm.jsx';
 
 const Login = () => {

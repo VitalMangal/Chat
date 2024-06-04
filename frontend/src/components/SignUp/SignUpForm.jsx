@@ -1,21 +1,16 @@
-import axios from 'axios';
 import React, {useEffect, useRef, useState, useContext} from 'react';
 import * as formik from 'formik';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
-import { useSelector, useDispatch } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
-import _ from 'lodash';
 
-import { selectors, setUser, removeUser } from '../redux/userSlice.js';
-import regLogo from '../pictures/RegImg.jpg';
-import authContext from '../context/AuthContext.js';
-import routes from '../routes.js';
+import authContext from '../../context/AuthContext.js';
+import { useSignUpUserMutation } from '../../redux';
 
-const RegistrationForm = () => {
+const SignUpForm = () => {
+  const [ signUpUser ] = useSignUpUserMutation();
   const { Formik } = formik;
-  const dispatch = useDispatch();
   const auth = useContext(authContext);
 	const navigate = useNavigate();
 	const inputRef = useRef();
@@ -53,26 +48,25 @@ const RegistrationForm = () => {
   const regSubmit = async (values) => {
     setIsLoading(true);
     setSubmitError(null);
-    try{
-      const { confirmPassword, ...newUser } = values;
-      const res = await axios.post(routes.signUpPath(), newUser);
-      const { data } = res;
-      data.id = 1; //_.uniqueId();
-      dispatch(setUser(data));
-      data.userLoggedIn = true;
-      localStorage.setItem('userData', JSON.stringify(data));
-      auth.logIn();
-      setIsLoading(false);
-      navigate("/");
-    } catch (err) {
-      setIsLoading(false);
-      if (err.isAxiosError && err.response.status === 409) {
-        setSubmitError('submitError');
-        inputRef.current.select();
-        return;
-      }
-    throw err;
-    }
+    const { confirmPassword, ...newUser } = values;
+
+    signUpUser(newUser).unwrap()
+      .then((response) => {
+        const newData = {...response, userLoggedIn: true};
+        localStorage.setItem('userData', JSON.stringify(newData));
+        auth.logIn();
+        setIsLoading(false);
+        navigate("/");
+      })
+      .catch((error) => {
+        setIsLoading(false);
+        if ( error.status === 409) {
+          setSubmitError('submitError');
+          inputRef.current.select();
+          return;
+        }
+        throw error;
+      })
   }
 
   return(
@@ -154,24 +148,4 @@ const RegistrationForm = () => {
     </Formik>
   )
 };
-
-const SignUp = () => {
-  return (
-    <div className="container-fluid h-100">
-      <div className="row justify-content-center align-content-center h-100">
-        <div className="col-12 col-md-8 col-xxl-6">
-          <div className="card shadow-sm">
-            <div className="card-body d-flex flex-column flex-md-row justify-content-around align-items-center p-5">
-              <div>
-                <img src={regLogo} className="rounded-circle" alt="registration" />
-              </div>
-              <RegistrationForm />
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  )
-};
-
-export default SignUp;
+ export default SignUpForm;

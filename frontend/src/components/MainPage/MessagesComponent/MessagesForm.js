@@ -6,7 +6,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { useAddMessageMutation, } from '../../../redux/index.js';
-import filter from '../../../leo-profanity.js'
+import filter from '../../../assets/leo-profanity.js'
 
 const MessageForm = ({ activeChannelId }) => {
   const [isLoading, setIsLoading] = useState(false);

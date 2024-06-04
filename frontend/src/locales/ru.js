@@ -1,5 +1,8 @@
 const ru = {
   translation: {
+    app: {
+      label: 'Hexlet Chat',
+    },
     signUp: {
       errors: {
         username: {
