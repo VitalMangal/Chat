@@ -1,4 +1,4 @@
-import Login from './components/Login';
+import Login from './components/Login/Login.jsx';
 import SignUp from './components/SignUp.jsx';
 import MainPage from './components/MainPage';
 import PageNotFound from './components/PageNotFound';

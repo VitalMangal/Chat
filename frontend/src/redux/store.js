@@ -1,6 +1,8 @@
 import { configureStore, isRejectedWithValue, Middleware} from '@reduxjs/toolkit';
-import { channelsApi } from './channelsApi.js';
-import { messagesApi } from './messagesApi.js';
+import {channelsApi} from './channelsApi.js';
+import {messagesApi} from './messagesApi.js';
+import {usersApi} from './usersApi.js';
+
 import userReducer from './userSlice.js';
 import { toast } from 'react-toastify';
 
@@ -17,10 +19,10 @@ export const store = configureStore({
   reducer: {
     [channelsApi.reducerPath]: channelsApi.reducer,
     [messagesApi.reducerPath]: messagesApi.reducer,
-    user: userReducer,
+    [usersApi.reducerPath]: usersApi.reducer,
   },
   middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware().concat(channelsApi.middleware).concat(messagesApi.middleware).concat(rtkQueryErrorLogger),
+    getDefaultMiddleware().concat(channelsApi.middleware).concat(messagesApi.middleware).concat(usersApi.middleware).concat(rtkQueryErrorLogger),
 });
 
 /*
