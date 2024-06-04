@@ -17,11 +17,6 @@ const rollbarConfig = {
   environment: 'testenv',
 }
 
-function TestError() {
-  const a = null
-  return a.hello()
-}
-
 export default () => {
   const root = ReactDOM.createRoot(document.getElementById('chat'));
   root.render(
@@ -31,7 +26,6 @@ export default () => {
           <Provider store={store}>
             <I18nextProvider i18n={i18next} defaultNS={'translation'}>
               <AuthProvider>
-                <TestError />
                 <App />
               </AuthProvider>
             </I18nextProvider>
