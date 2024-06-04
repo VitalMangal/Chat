@@ -13,10 +13,7 @@ import logo from '../pictures/loginImg.jpeg';
 import authContext from '../context/AuthContext.js';
 import routes from '../routes.js';
 
-const formSchema = Yup.object().shape({
-	username: Yup.string().required('Обязательное поле').trim(),
-	password: Yup.string().required('Обязательное поле'),
-});
+
 
 const LoginForm = () => {
   const { t } = useTranslation();
@@ -26,6 +23,11 @@ const LoginForm = () => {
 	const inputRef = useRef();
 	const [authFailed, setAuthFailed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+
+  const formSchema = Yup.object().shape({
+    username: Yup.string().required(t('login.errors.required')).trim(),
+    password: Yup.string().required(t('login.errors.required')),
+  });
 
 	useEffect(() => {
     inputRef.current.focus();
@@ -98,7 +100,7 @@ const LoginForm = () => {
           disabled={isLoading}
         />
         <Form.Label htmlFor="password" className="form-label">{t('login.password')}</Form.Label>
-        <Form.Control.Feedback type="invalid">{t('login.error')}</Form.Control.Feedback>
+        <Form.Control.Feedback type="invalid">{t('login.errors.incorrect')}</Form.Control.Feedback>
       </Form.Group>
       <Button
         type="submit"

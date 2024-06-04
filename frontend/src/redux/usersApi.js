@@ -7,33 +7,24 @@ export const usersApi = createApi({
     baseUrl: routes.usersPath(),
   }),
   endpoints: (builder) => ({
-    // const res = await axios.post(routes.loginPath(), values);
-    // не додедлал, вопросы по удалению
     loginUser: builder.mutation({
-      query: (message) => ({
+      query: (userData) => ({
+        url: 'login',
         method: 'POST',
-        body: message,
+        body: userData,
       }),
     }),
-    editMessage: builder.mutation({
-      query: (id, message) => ({
-        url: id,
-        method: 'PATCH',
-        body: message,
-      }),
-    }),
-    removeMessage: builder.mutation({
-      query: (id) => ({
-        url: id,
-        method: 'DELETE',
+    signUpUser: builder.mutation({
+      query: (userData) => ({
+        url: 'signup',
+        method: 'POST',
+        body: userData,
       }),
     }),
   }),
 });
 
 export const {
-  useGetMessagesQuery,
-  useAddMessageMutation,
-  useEditMessageMutation,
-  useRemoveMessageMutation
-} = messagesApi;
+  useLoginUserMutation,
+  useSignUpUserMutation,
+} = usersApi;

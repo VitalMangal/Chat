@@ -28,7 +28,10 @@ const ru = {
       come: 'Войти',
       nickname: 'Ваш ник',
       password: 'Пароль',
-      error: 'Неверное имя пользователя или пароль',
+      errors: {
+        incorrect: 'Неверное имя пользователя или пароль',
+        required: 'Обязательное поле',
+      },
       doNotHaveAnAccount: 'Нет аккаунта?',
       registration: 'Регистрация',
     },
