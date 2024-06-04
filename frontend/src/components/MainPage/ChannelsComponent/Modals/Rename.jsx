@@ -1,14 +1,13 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import * as formik from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-
 import 'react-toastify/dist/ReactToastify.css';
+import { useGetChannelsQuery, useRenameChannelMutation } from '../../../../redux/index.js';
 
-import { useGetChannelsQuery, useAddChannelMutation } from '../../../redux';
-import filter from '../../../leo-profanity';
+import filter from '../../../../leo-profanity.js';
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({
@@ -22,53 +21,47 @@ const getSchema = (channels) => {
   return schema;
 };
 
-const Add = ({ setActiveChannelId, closeModal }) => {
+const Rename = ({ modalInfo, closeModal }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   const { Formik } = formik;
-  const { data, error, refetch } = useGetChannelsQuery();
-  //нужна обработка ошибок, но как ее выполнить?
+
+  const { data } = useGetChannelsQuery();
   const channelsNames = data.map((channel) => channel.name);
+
+  const [ renameChannel ] = useRenameChannelMutation();
 
   const inputRef = useRef();
   useEffect(() => {
-    inputRef.current.focus();
+    inputRef.current.select();    
   }, []);
 
- //реализовать обработку ошибок и время загрузки
-  const [
-    addChannel,
-    { data: response, error: addUserError, isLoading: isAddingUser },
-  ] = useAddChannelMutation();
-
-  const handleSubmit = async (values) => {
+  const handleSubmit = async (values) =>  {
     setIsLoading(true);
     try{
-      const filtered = filter.clean(values.name)
-      const resp = await addChannel({name: filtered});
-      setActiveChannelId(resp.data.id);
+      const filtered = filter.clean(values.name);
+      await renameChannel({id: modalInfo.channel.id, body: {name: filtered}});
       closeModal();
       setIsLoading(false);
-      toast.success(t('modal.add.added'));
+      toast.success(t('modal.rename.renamed'));
     } catch (err) {
-    //Обработка ошибок либо тут, либо через мидлвару
       console.log(err);
       setIsLoading(false);
-      toast.error(t('modal.add.errors.notAdded'));
+      toast.error(t('modal.rename.errors.notRenamed'));
     }
   };
 
   return (
     <Modal show aria-labelledby="contained-modal-title-vcenter" centered >
       <Modal.Header closeButton onHide={closeModal}>
-        <Modal.Title>{t('modal.add.title')}</Modal.Title>
+        <Modal.Title>{t('modal.rename.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik
           validationSchema={getSchema(channelsNames)}
           onSubmit={handleSubmit}
           initialValues={{
-            name: '',
+            name: modalInfo.channel.name,
           }}
         >
         {({ handleSubmit, handleChange, values, touched, errors }) => (
@@ -85,17 +78,17 @@ const Add = ({ setActiveChannelId, closeModal }) => {
               type="text"
               disabled={isLoading}
             />
-            <Form.Label htmlFor="name" visuallyHidden>{t('modal.add.label')}</Form.Label>
-            <Form.Control.Feedback type="invalid">{!!errors.name ? t(`modal.add.errors.${errors.name}`) : null}</Form.Control.Feedback>
+            <Form.Label htmlFor="name" visuallyHidden>{t('modal.rename.label')}</Form.Label>
+            <Form.Control.Feedback type="invalid">{!!errors.name ? t(`modal.rename.errors.${errors.name}`) : null}</Form.Control.Feedback>
           </Form.Group>
           <Form.Group  className="mt-2 d-flex justify-content-end">
             <Button 
-              className="me-2"
-              variant="secondary"
+              className="me-2" 
+              variant="secondary" 
               onClick={closeModal}
               disabled={isLoading}
             >
-              {t('modal.add.cancel')}
+              {t('modal.rename.cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -113,4 +106,4 @@ const Add = ({ setActiveChannelId, closeModal }) => {
   );
 };
 
-export default Add;
+export default Rename;

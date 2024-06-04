@@ -1,15 +1,14 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import * as formik from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
-import axios from 'axios';
 import * as yup from 'yup';
-import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useGetChannelsQuery, useRenameChannelMutation } from '../../../redux/index.js'
+import { useGetChannelsQuery, useAddChannelMutation } from '../../../../redux';
+import filter from '../../../../leo-profanity';
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({
@@ -23,50 +22,48 @@ const getSchema = (channels) => {
   return schema;
 };
 
-const Rename = ({ modalInfo, closeModal }) => {
+const Add = ({ setActiveChannelId, closeModal }) => {
   const [isLoading, setIsLoading] = useState(false);
   const { t } = useTranslation();
   const { Formik } = formik;
 
-  const { data, error, refetch } = useGetChannelsQuery();
-  console.log(data, 'channels rename map');
-  const channelsNames = data.map((channel) => channel.name);
-
-  const [
-    renameChannel,
-    { data:response, error: addUserError, isLoading: isAddingUser },
-  ] = useRenameChannelMutation();
+  const { data } = useGetChannelsQuery();
+  const [ addChannel ] = useAddChannelMutation();
 
   const inputRef = useRef();
   useEffect(() => {
-    inputRef.current.select();    
+    inputRef.current.focus();
   }, []);
 
-  const handleSubmit = async (values) =>  {
+  const channelsNames = data.map((channel) => channel.name);
+
+  const handleSubmit = async (values) => {
     setIsLoading(true);
     try{
-      const resp = await renameChannel({id: modalInfo.channel.id, body: values}).unwrap();
+      const filtered = filter.clean(values.name)
+      const resp = await addChannel({name: filtered});
+      setActiveChannelId(resp.data.id);
       closeModal();
       setIsLoading(false);
-      toast.success(t('modal.rename.renamed'));
+      toast.success(t('modal.add.added'));
     } catch (err) {
       console.log(err);
       setIsLoading(false);
-      toast.error(t('modal.rename.errors.notRenamed'));
+      toast.error(t('modal.add.errors.notAdded'));
     }
   };
 
   return (
     <Modal show aria-labelledby="contained-modal-title-vcenter" centered >
       <Modal.Header closeButton onHide={closeModal}>
-        <Modal.Title>{t('modal.rename.title')}</Modal.Title>
+        <Modal.Title>{t('modal.add.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
         <Formik
           validationSchema={getSchema(channelsNames)}
           onSubmit={handleSubmit}
           initialValues={{
-            name: modalInfo.channel.name,
+            name: '',
           }}
         >
         {({ handleSubmit, handleChange, values, touched, errors }) => (
@@ -83,17 +80,17 @@ const Rename = ({ modalInfo, closeModal }) => {
               type="text"
               disabled={isLoading}
             />
-            <Form.Label htmlFor="name" visuallyHidden>{t('modal.rename.label')}</Form.Label>
-            <Form.Control.Feedback type="invalid">{!!errors.name ? t(`modal.rename.errors.${errors.name}`) : null}</Form.Control.Feedback>
+            <Form.Label htmlFor="name" visuallyHidden>{t('modal.add.label')}</Form.Label>
+            <Form.Control.Feedback type="invalid">{!!errors.name ? t(`modal.add.errors.${errors.name}`) : null}</Form.Control.Feedback>
           </Form.Group>
           <Form.Group  className="mt-2 d-flex justify-content-end">
             <Button 
-              className="me-2" 
-              variant="secondary" 
+              className="me-2"
+              variant="secondary"
               onClick={closeModal}
               disabled={isLoading}
             >
-              {t('modal.rename.cancel')}
+              {t('modal.add.cancel')}
             </Button>
             <Button 
               type="submit" 
@@ -111,4 +108,4 @@ const Rename = ({ modalInfo, closeModal }) => {
   );
 };
 
-export default Rename;
+export default Add;

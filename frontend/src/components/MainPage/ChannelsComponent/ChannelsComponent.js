@@ -1,18 +1,12 @@
-import React, { useState, useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import React, { useState } from 'react';
 import { ButtonToolbar, Button, ButtonGroup, DropdownButton, Dropdown } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
-import axios from 'axios';
+import { useGetChannelsQuery } from '../../../redux/index.js'
+import { toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import cn from 'classnames';
 
-import routes from '../../routes.js';
 import getModal from './Modals/index.js';
-
-import { useGetChannelsQuery } from '../../redux/index.js'
-import { toast } from 'react-toastify';
-
-import 'react-toastify/dist/ReactToastify.css';
 
 const renderModal = (modalInfo, setActiveChannelId, closeModal) => {
   if (!modalInfo.type) {
@@ -23,14 +17,12 @@ const renderModal = (modalInfo, setActiveChannelId, closeModal) => {
 };
 
 const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
-  const dispatch = useDispatch();
-  const navigate = useNavigate();
   const { t } = useTranslation();
-  const { data = [], error, isLoading, refetch } = useGetChannelsQuery();
+  const { data = [], error } = useGetChannelsQuery();
+
   if (error) {
-    toast.error(t('channels.error'));
+    toast.error(t('channels.error.message'));
   }
-  //добавить обработку ошибок и время загрузки
 
   const [modalInfo, setModalInfo] = useState({ type: null, channel: null });
 
@@ -51,7 +43,6 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
           </button>
         </div>
         <ButtonToolbar vertical='true' id="channels-box" aria-label="" className='flex-column mb-3 px-2 text-truncate h-100 overflow-auto'>
-          {/*странное решение*/}
           {data.map((channel) => {
             const btnClasses = cn('rounded-0', 'text-start', 'text-truncate');
             const buttonVariant = (channel.id === activeChannelId ? 'secondary' : 'light');

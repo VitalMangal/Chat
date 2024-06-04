@@ -1,27 +1,20 @@
 import React, {useState} from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
-import axios from 'axios';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useRemoveChannelMutation } from '../../../redux/index.js'
+import { useRemoveChannelMutation } from '../../../../redux/index.js'
 
 const defaultChannelId = '1';
 
-//не работает по нажатию клавиши Enter
 const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
-   //реализовать обработку ошибок и время загрузки
-   const [
-    removeChannel,
-    { data: response, error: addUserError, isLoading: isAddingUser },
-  ] = useRemoveChannelMutation();
+   const [ removeChannel ] = useRemoveChannelMutation();
 
   const handleSubmit = async (e) =>  {
-    //нужна обработка ошибок, но как ее выполнить?
     e.preventDefault();
     setIsLoading(true);
     try {
@@ -35,7 +28,6 @@ const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
       setIsLoading(false);
       toast.error(t('modal.remove.notRemoved'));
     }
-
   };
 
   return (
