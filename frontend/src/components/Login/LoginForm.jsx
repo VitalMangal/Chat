@@ -1,4 +1,6 @@
-import React, {useEffect, useRef, useState, useContext} from 'react';
+import React, {
+  useEffect, useRef, useState, useContext,
+} from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -9,12 +11,12 @@ import authContext from '../../context/AuthContext.js';
 import { useLoginUserMutation } from '../../redux';
 
 const LoginForm = () => {
-  const [ loginUser ] = useLoginUserMutation();
+  const [loginUser] = useLoginUserMutation();
   const { t } = useTranslation();
   const auth = useContext(authContext);
-	const navigate = useNavigate();
-	const inputRef = useRef();
-	const [authFailed, setAuthFailed] = useState(false);
+  const navigate = useNavigate();
+  const inputRef = useRef();
+  const [authFailed, setAuthFailed] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
 
   const formSchema = yup.object().shape({
@@ -22,39 +24,39 @@ const LoginForm = () => {
     password: yup.string().required(t('login.errors.required')),
   });
 
-	useEffect(() => {
+  useEffect(() => {
     inputRef.current.focus();
   }, []);
 
-	const formik = useFormik({
+  const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
-		validationSchema: formSchema,
+    validationSchema: formSchema,
     onSubmit: (values) => {
       setIsLoading(true);
       setAuthFailed(false);
 
       loginUser(values).unwrap()
         .then((response) => {
-          const newData = {...response, userLoggedIn: true};
+          const newData = { ...response, userLoggedIn: true };
           localStorage.setItem('userData', JSON.stringify(newData));
           auth.logIn();
           setIsLoading(false);
-          navigate("/");
+          navigate('/');
         })
         .catch((error) => {
           console.log(error, 'err Login');
           setIsLoading(false);
           formik.setSubmitting(false);
-            if ( error.status === 401) {
+          if (error.status === 401) {
             setAuthFailed(true);
             inputRef.current.select();
             return;
-            }
+          }
           throw error;
-        })
+        });
     },
   });
 
@@ -102,7 +104,7 @@ const LoginForm = () => {
         {t('login.come')}
       </Button>
     </Form>
-  )
+  );
 };
 
 export default LoginForm;

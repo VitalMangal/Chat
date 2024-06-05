@@ -1,20 +1,20 @@
-import React, {useState} from 'react';
+import React, { useState } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useRemoveChannelMutation } from '../../../../redux/index.js'
+import { useRemoveChannelMutation } from '../../../../redux/index.js';
 
 const defaultChannelId = '1';
 
 const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
   const { t } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
-   const [ removeChannel ] = useRemoveChannelMutation();
+  const [removeChannel] = useRemoveChannelMutation();
 
-  const handleSubmit = async (e) =>  {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
@@ -31,15 +31,15 @@ const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
   };
 
   return (
-    <Modal show aria-labelledby="contained-modal-title-vcenter" centered >
+    <Modal show aria-labelledby="contained-modal-title-vcenter" centered>
       <Modal.Header closeButton onHide={closeModal}>
         <Modal.Title>{t('modal.remove.title')}</Modal.Title>
       </Modal.Header>
       <Modal.Body>
-      <p className="lead">{t('modal.remove.body')}</p>
+        <p className="lead">{t('modal.remove.body')}</p>
         <Form onSubmit={handleSubmit}>
-          <Form.Group  className="mt-2 d-flex justify-content-end">
-            <Button 
+          <Form.Group className="mt-2 d-flex justify-content-end">
+            <Button
               className="me-2"
               variant="secondary"
               onClick={closeModal}

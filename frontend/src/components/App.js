@@ -1,11 +1,3 @@
-import Login from './Login/Login.jsx';
-import SignUp from './SignUp/SignUp.jsx';
-import MainPage from './MainPage/MainPage.jsx';
-import PageNotFound from './PageNotFound.jsx';
-import AuthButton from './AuthButton.js';
-
-import authContext from '../context/AuthContext.js';
-
 import {
   BrowserRouter,
   Routes,
@@ -18,6 +10,13 @@ import React, { useContext } from 'react';
 import { Navbar } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
+import Login from './Login/Login.jsx';
+import SignUp from './SignUp/SignUp.jsx';
+import MainPage from './MainPage/MainPage.jsx';
+import PageNotFound from './PageNotFound.jsx';
+import AuthButton from './AuthButton.js';
+
+import authContext from '../context/AuthContext.js';
 
 const PrivateRoute = ({ children }) => {
   const location = useLocation();
@@ -27,20 +26,20 @@ const PrivateRoute = ({ children }) => {
     auth.loggedIn ? children : <Navigate to="/login" state={{ from: location }} />
   );
 };
-function App() {
+const App = () => {
   const { t } = useTranslation();
   return (
     <>
       <div className="d-flex flex-column h-100">
         <BrowserRouter>
           <Navbar bg="white" expand="lg" className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
-            <div className='container'>
+            <div className="container">
               <Navbar.Brand as={Link} to="/">{t('app.label')}</Navbar.Brand>
               <AuthButton />
             </div>
           </Navbar>
           <Routes>
-            <Route 
+            <Route
               path="/"
               element={(
                 <PrivateRoute>
@@ -48,8 +47,8 @@ function App() {
                 </PrivateRoute>
               )}
             />
-            <Route path="/login" element={<Login/>} />
-            <Route path="/signup" element={<SignUp/>} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
@@ -68,6 +67,6 @@ function App() {
       />
     </>
   );
-}
+};
 
 export default App;

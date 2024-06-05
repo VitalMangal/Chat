@@ -1,10 +1,10 @@
-import React, {useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 import ChannelsComponent from './ChannelsComponent';
 import MessagesComponent from './MessagesComponent';
-import {channelsApi, messagesApi } from '../../redux';
-import socket from '../../assets/socket.js'
+import { channelsApi, messagesApi } from '../../redux';
+import socket from '../../assets/socket.js';
 
 const defaultActiveChannelId = '1';
 
@@ -21,7 +21,7 @@ const MainPage = () => {
   }, []);
 
   useEffect(() => {
-    socket.on("connect", () => {
+    socket.on('connect', () => {
       console.log('user connected');
     });
     socket.on('newMessage', (payload) => {
@@ -29,7 +29,7 @@ const MainPage = () => {
         messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
           draftMessages.push(payload);
         }),
-      )
+      );
     });
     socket.on('newChannel', (payload) => {
       console.log(payload, 'payload newChannel');
@@ -37,11 +37,11 @@ const MainPage = () => {
         channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
           draftChannels.push(payload);
         }),
-      )
+      );
     });
     socket.on('removeChannel', (payload) => dispatch(
       channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
-        const index = draftChannels.findIndex(ch => ch.id === payload);
+        const index = draftChannels.findIndex((ch) => ch.id === payload);
         draftChannels.splice(index, 1);
       }),
     ));
@@ -49,9 +49,9 @@ const MainPage = () => {
       channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
         draftChannels.map((ch) => {
           if (ch.id === payload.id) {
-            Object.assign(ch, payload)
+            Object.assign(ch, payload);
           }
-        })          
+        });
       }),
     ));
 
@@ -71,7 +71,7 @@ const MainPage = () => {
         <MessagesComponent activeChannelId={activeChannelId} />
       </div>
     </div>
-  )
+  );
 };
 
 export default MainPage;

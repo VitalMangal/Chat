@@ -3,7 +3,7 @@ import routes from '../assets/routes.js';
 
 export const usersApi = createApi({
   reducerPath: 'users',
-  baseQuery: fetchBaseQuery({ 
+  baseQuery: fetchBaseQuery({
     baseUrl: routes.usersPath(),
   }),
   endpoints: (builder) => ({

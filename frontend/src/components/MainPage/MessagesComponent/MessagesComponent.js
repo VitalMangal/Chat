@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
-import { useGetChannelsQuery, useGetMessagesQuery, useAddMessageMutation, } from '../../../redux/index.js';
+import { useGetChannelsQuery, useGetMessagesQuery, useAddMessageMutation } from '../../../redux/index.js';
 import MessageForm from './MessagesForm.js';
 
 const MessagesComponent = ({ activeChannelId }) => {
@@ -14,8 +14,8 @@ const MessagesComponent = ({ activeChannelId }) => {
   if (error) {
     toast.error(t('messages.errors.loading'));
   }
-  
-  const activeChannel = channels.filter((channel) => channel.id === activeChannelId );
+
+  const activeChannel = channels.filter((channel) => channel.id === activeChannelId);
   const messagesFromActiveChannel = messages.filter((mess) => mess.channelId === activeChannelId);
 
   return (
@@ -28,20 +28,20 @@ const MessagesComponent = ({ activeChannelId }) => {
           <span className="text-muted">{t('messages.mess', { count: messagesFromActiveChannel.length })}</span>
         </div>
         <div id="messages-box" className="chat-messages overflow-auto px-5 ">
-          {messagesFromActiveChannel.map((message) => {
-            return(
-              <div className="text-break mb-2" key={message.id}>
-                <b>{message.username}</b>: {message.body}
-              </div>
-            )              
-          })}
+          {messagesFromActiveChannel.map((message) => (
+            <div className="text-break mb-2" key={message.id}>
+              <b>{message.username}</b>
+              :
+              {message.body}
+            </div>
+          ))}
         </div>
         <div className="mt-auto px-5 py-3">
-          <MessageForm activeChannelId={activeChannelId}/>
+          <MessageForm activeChannelId={activeChannelId} />
         </div>
       </div>
     </div>
-  )
+  );
 };
 
 export default MessagesComponent;

@@ -3,15 +3,15 @@ import routes from '../assets/routes';
 
 export const channelsApi = createApi({
   reducerPath: 'channels',
-  baseQuery: fetchBaseQuery({ 
+  baseQuery: fetchBaseQuery({
     baseUrl: routes.channelsPath(),
     prepareHeaders: (headers) => {
       const userData = JSON.parse(localStorage.getItem('userData'));
       const { token } = userData;
       if (token) {
-        headers.set('Authorization', `Bearer ${token}`)
-      }  
-      return headers
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
     },
   }),
   endpoints: (builder) => ({
@@ -25,7 +25,7 @@ export const channelsApi = createApi({
       }),
     }),
     renameChannel: builder.mutation({
-      query: ({id, body}) => ({
+      query: ({ id, body }) => ({
         url: id,
         method: 'PATCH',
         body,
@@ -40,9 +40,9 @@ export const channelsApi = createApi({
   }),
 });
 
-export const { 
-  useGetChannelsQuery, 
-  useAddChannelMutation, 
-  useRenameChannelMutation, 
-  useRemoveChannelMutation 
+export const {
+  useGetChannelsQuery,
+  useAddChannelMutation,
+  useRenameChannelMutation,
+  useRemoveChannelMutation,
 } = channelsApi;

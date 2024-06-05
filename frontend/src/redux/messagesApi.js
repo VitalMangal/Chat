@@ -3,15 +3,15 @@ import routes from '../assets/routes.js';
 
 export const messagesApi = createApi({
   reducerPath: 'messages',
-  baseQuery: fetchBaseQuery({ 
+  baseQuery: fetchBaseQuery({
     baseUrl: routes.messagesPath(),
     prepareHeaders: (headers) => {
       const userData = JSON.parse(localStorage.getItem('userData'));
       const { token } = userData;
       if (token) {
-        headers.set('Authorization', `Bearer ${token}`)
-      }  
-      return headers
+        headers.set('Authorization', `Bearer ${token}`);
+      }
+      return headers;
     },
   }),
   endpoints: (builder) => ({
@@ -44,5 +44,5 @@ export const {
   useGetMessagesQuery,
   useAddMessageMutation,
   useEditMessageMutation,
-  useRemoveMessageMutation
+  useRemoveMessageMutation,
 } = messagesApi;
