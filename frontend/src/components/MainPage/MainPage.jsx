@@ -62,12 +62,15 @@ const MainPage = () => {
       socket.off('removeChannel');
       socket.off('renameChannel');
     };
-  }, []);
+  });
 
   return (
     <div className="container h-100 my-4 overflow-hidden rounded shadow">
       <div className="row h-100 bg-white flex-md-row">
-        <ChannelsComponent activeChannelId={activeChannelId} setActiveChannelId={setActiveChannelId} />
+        <ChannelsComponent 
+          activeChannelId={activeChannelId}
+          setActiveChannelId={setActiveChannelId}
+        />
         <MessagesComponent activeChannelId={activeChannelId} />
       </div>
     </div>

@@ -10,9 +10,9 @@ const AuthProvider = ({ children }) => {
     localStorage.removeItem('userData');
     setLoggedIn(false);
   };
-  let props = useMemo(() => { loggedIn, logIn, logOut }, [loggedIn]);
+  const props = useMemo(() => ({ loggedIn, logIn, logOut }), [loggedIn]);
   return (
-    <AuthContext.Provider value={{ loggedIn, logIn, logOut }}>
+    <AuthContext.Provider value={props}>
       {children}
     </AuthContext.Provider>
   );

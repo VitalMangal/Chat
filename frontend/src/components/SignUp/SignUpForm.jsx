@@ -94,7 +94,7 @@ const SignUpForm = () => {
               name="username"
               autoComplete="username"
               id="username"
-              isInvalid={touched.username && !!errors.username || !!submitError}
+              isInvalid={(touched.username && !!errors.username) || !!submitError}
               ref={inputRef}
               type="text"
               disabled={isLoading}
@@ -114,7 +114,7 @@ const SignUpForm = () => {
               autoComplete="new-password"
               type="password"
               id="password"
-              isInvalid={touched.password && !!errors.password || !!submitError}
+              isInvalid={(touched.password && !!errors.password) || !!submitError}
               disabled={isLoading}
             />
             <Form.Control.Feedback type="invalid" tooltip>
@@ -131,7 +131,7 @@ const SignUpForm = () => {
               autoComplete="new-password"
               type="password"
               id="confirmPassword"
-              isInvalid={touched.confirmPassword && !!errors.confirmPassword || !!submitError}
+              isInvalid={(touched.confirmPassword && !!errors.confirmPassword) || !!submitError}
               disabled={isLoading}
             />
             <Form.Control.Feedback type="invalid" tooltip>
