@@ -22,7 +22,6 @@ const MainPage = () => {
 
   useEffect(() => {
     socket.on('connect', () => {
-      console.log('user connected');
     });
     socket.on('newMessage', (payload) => {
       dispatch(

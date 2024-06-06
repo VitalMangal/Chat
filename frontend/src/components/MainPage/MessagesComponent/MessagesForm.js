@@ -35,7 +35,6 @@ const MessageForm = ({ activeChannelId }) => {
         formik.resetForm();
         setIsLoading(false);
       } catch (err) {
-        console.log(err);
         setIsLoading(false);
         toast.error(t('messages.errors.send'));
       }

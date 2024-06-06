@@ -24,7 +24,6 @@ const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
       closeModal();
       toast.success(t('modal.remove.removed'));
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
       toast.error(t('modal.remove.notRemoved'));
     }

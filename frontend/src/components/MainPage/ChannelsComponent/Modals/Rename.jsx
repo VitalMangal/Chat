@@ -45,7 +45,6 @@ const Rename = ({ modalInfo, closeModal }) => {
       setIsLoading(false);
       toast.success(t('modal.rename.renamed'));
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
       toast.error(t('modal.rename.errors.notRenamed'));
     }

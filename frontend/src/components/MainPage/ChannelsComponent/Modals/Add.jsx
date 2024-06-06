@@ -47,7 +47,6 @@ const Add = ({ setActiveChannelId, closeModal }) => {
       setIsLoading(false);
       toast.success(t('modal.add.added'));
     } catch (err) {
-      console.log(err);
       setIsLoading(false);
       toast.error(t('modal.add.errors.notAdded'));
     }
