@@ -55,11 +55,11 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
         </div>
         <ButtonToolbar vertical="true" id="channels-box" aria-label="" className="flex-column mb-3 px-2 text-truncate h-100 overflow-auto">
           {data.map((channel) => {
-            const btnClasses = cn('rounded-0', 'text-start', 'text-truncate');
+            const btnClasses = cn('w-100', 'rounded-0', 'text-start', 'text-truncate');
             const buttonVariant = (channel.id === activeChannelId ? 'secondary' : 'light');
             if (!channel.removable) {
               return (
-                <ButtonGroup className="w-100" key={channel.id}>
+                <ButtonGroup className="d-flex" key={channel.id}>
                   <Button
                     type="button"
                     variant={buttonVariant}
@@ -73,7 +73,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
               );
             }
             return (
-              <Dropdown as={ButtonGroup} id="dropdown" className="w-100 rounded-0" key={channel.id}>
+              <Dropdown as={ButtonGroup} id="dropdown" className="d-flex" key={channel.id}>
                 <Button
                   type="button"
                   variant={buttonVariant}
