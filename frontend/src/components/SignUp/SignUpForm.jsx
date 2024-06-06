@@ -86,14 +86,13 @@ const SignUpForm = () => {
       }) => (
         <Form className="w-50" onSubmit={handleSubmit}>
           <h1 className="text-center mb-4">{t('signUp.registration')}</h1>
-          <Form.Group className="form-floating mb-3 position-relative">
+          <Form.Group controlId="username" className="form-floating mb-3 position-relative">
             <Form.Control
               onChange={handleChange}
               value={values.username}
-              placeholder={t('signUp.username')}
+              placeholder="username"
               name="username"
               autoComplete="username"
-              id="username"
               isInvalid={(touched.username && !!errors.username) || !!submitError}
               ref={inputRef}
               type="text"
@@ -104,7 +103,7 @@ const SignUpForm = () => {
               {getErrorText('username', errors.username)}
             </Form.Control.Feedback>
           </Form.Group>
-          <Form.Group className="form-floating mb-3 position-relative">
+          <Form.Group controlId="password" className="form-floating mb-3 position-relative">
             <Form.Control
               onChange={handleChange}
               value={values.password}
@@ -113,7 +112,6 @@ const SignUpForm = () => {
               aria-describedby="passwordHelpBlock"
               autoComplete="new-password"
               type="password"
-              id="password"
               isInvalid={(touched.password && !!errors.password) || !!submitError}
               disabled={isLoading}
             />
@@ -122,7 +120,7 @@ const SignUpForm = () => {
               {getErrorText('password', errors.password)}
             </Form.Control.Feedback>
           </Form.Group>
-          <Form.Group className="form-floating mb-4 position-relative">
+          <Form.Group controlId="confirmPassword" className="form-floating mb-4 position-relative">
             <Form.Control
               onChange={handleChange}
               value={values.confirmPassword}
@@ -130,7 +128,6 @@ const SignUpForm = () => {
               name="confirmPassword"
               autoComplete="new-password"
               type="password"
-              id="confirmPassword"
               isInvalid={(touched.confirmPassword && !!errors.confirmPassword) || !!submitError}
               disabled={isLoading}
             />
