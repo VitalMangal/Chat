@@ -32,7 +32,6 @@ const MainPage = () => {
       );
     });
     socket.on('newChannel', (payload) => {
-      console.log(payload, 'payload newChannel');
       dispatch(
         channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
           draftChannels.push(payload);

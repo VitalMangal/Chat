@@ -47,7 +47,7 @@ const LoginForm = () => {
           navigate('/');
         })
         .catch((error) => {
-          console.log(error, 'err Login');
+          console.log(error);
           setIsLoading(false);
           formik.setSubmitting(false);
           if (error.status === 401) {
