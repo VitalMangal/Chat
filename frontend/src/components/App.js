@@ -26,6 +26,16 @@ const PrivateRoute = ({ children }) => {
     auth.loggedIn ? children : <Navigate to="/login" state={{ from: location }} />
   );
 };
+
+const LoggedRoute = ({ children }) => {
+  const location = useLocation();
+  const auth = useContext(authContext);
+
+  return (
+    auth.loggedIn ? <Navigate to="/" state={{ from: location }}/> : children 
+  );
+};
+
 const App = () => {
   const { t } = useTranslation();
   return (
@@ -39,16 +49,22 @@ const App = () => {
             </div>
           </Navbar>
           <Routes>
-            <Route
-              path="/"
-              element={(
+            <Route path="/" element={(
                 <PrivateRoute>
                   <MainPage />
                 </PrivateRoute>
               )}
             />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
+            <Route path="/login" element={(
+              <LoggedRoute>
+                <Login />
+              </LoggedRoute>            
+            )} />
+            <Route path="/signup" element={(
+              <LoggedRoute>
+                <SignUp />    
+              </LoggedRoute>            
+            )} />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
