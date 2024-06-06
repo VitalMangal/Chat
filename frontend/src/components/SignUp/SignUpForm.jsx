@@ -120,7 +120,7 @@ const SignUpForm = () => {
             <Form.Label>{t('signUp.password')}</Form.Label>
             <Form.Control.Feedback type="invalid" tooltip>
               {getErrorText('password', errors.password)}
-            </Form.Control.Feedback>            
+            </Form.Control.Feedback>
           </Form.Group>
           <Form.Group className="form-floating mb-4 position-relative">
             <Form.Control
@@ -137,7 +137,7 @@ const SignUpForm = () => {
             <Form.Label>{t('signUp.confirmPassword')}</Form.Label>
             <Form.Control.Feedback type="invalid" tooltip>
               {getErrorText('confirmPassword', errors.confirmPassword) || getErrorText('submitError', submitError)}
-            </Form.Control.Feedback>            
+            </Form.Control.Feedback>
           </Form.Group>
           <Button
             disabled={isLoading}
