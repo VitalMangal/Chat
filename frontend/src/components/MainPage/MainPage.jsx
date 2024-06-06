@@ -49,8 +49,9 @@ const MainPage = () => {
       channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
         draftChannels.map((ch) => {
           if (ch.id === payload.id) {
-            Object.assign(ch, payload);
+            return Object.assign(ch, payload);
           }
+          return ch;
         });
       }),
     ));
@@ -67,7 +68,7 @@ const MainPage = () => {
   return (
     <div className="container h-100 my-4 overflow-hidden rounded shadow">
       <div className="row h-100 bg-white flex-md-row">
-        <ChannelsComponent 
+        <ChannelsComponent
           activeChannelId={activeChannelId}
           setActiveChannelId={setActiveChannelId}
         />

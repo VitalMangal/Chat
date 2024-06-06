@@ -37,7 +37,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
 
   const channelsNames = data.map((channel) => channel.name);
 
-  const handleSubmit = async (values) => {
+  const addSubmit = async (values) => {
     setIsLoading(true);
     try {
       const filtered = filter.clean(values.name);
@@ -61,7 +61,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
       <Modal.Body>
         <Formik
           validationSchema={getSchema(channelsNames)}
-          onSubmit={handleSubmit}
+          onSubmit={addSubmit}
           initialValues={{
             name: '',
           }}

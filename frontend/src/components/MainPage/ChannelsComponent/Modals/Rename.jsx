@@ -36,7 +36,7 @@ const Rename = ({ modalInfo, closeModal }) => {
     inputRef.current.select();
   }, []);
 
-  const handleSubmit = async (values) => {
+  const renameSubmit = async (values) => {
     setIsLoading(true);
     try {
       const filtered = filter.clean(values.name);
@@ -59,7 +59,7 @@ const Rename = ({ modalInfo, closeModal }) => {
       <Modal.Body>
         <Formik
           validationSchema={getSchema(channelsNames)}
-          onSubmit={handleSubmit}
+          onSubmit={renameSubmit}
           initialValues={{
             name: modalInfo.channel.name,
           }}
