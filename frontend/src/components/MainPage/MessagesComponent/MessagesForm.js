@@ -15,7 +15,7 @@ const MessageForm = ({ activeChannelId }) => {
   const inputRef = useRef();
   useEffect(() => {
     inputRef.current.focus();
-  }, [activeChannelId]);
+  }, [activeChannelId, isLoading]);
 
   const [addMessage] = useAddMessageMutation();
 
@@ -39,9 +39,6 @@ const MessageForm = ({ activeChannelId }) => {
         console.log(err);
         setIsLoading(false);
         toast.error(t('messages.errors.send'));
-      } finally {
-        // не работает автофокус
-        inputRef.current.focus();
       }
     },
   });
