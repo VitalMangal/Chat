@@ -84,7 +84,7 @@ const ru = {
         body: 'Уверены?',
         cancel: 'Отменить',
         send: 'Удалить',
-        removed: 'Канал удален',
+        removed: 'Канал удалён',
         notRemoved: 'Ошибка при удалении канала',
       },
       rename: {
