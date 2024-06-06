@@ -32,7 +32,7 @@ const ru = {
       nickname: 'Ваш ник',
       password: 'Пароль',
       errors: {
-        incorrect: 'Неверное имя пользователя или пароль',
+        incorrect: 'Неверные имя пользователя или пароль',
         required: 'Обязательное поле',
       },
       doNotHaveAnAccount: 'Нет аккаунта?',
