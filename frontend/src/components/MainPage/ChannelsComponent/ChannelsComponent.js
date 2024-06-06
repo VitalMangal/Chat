@@ -62,6 +62,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
               return (
                 <ButtonGroup className="w-100" key={channel.id}>
                   <Button
+                    type="button"
                     variant={buttonVariant}
                     className={btnClasses}
                     onClick={() => setActiveChannelId(channel.id)}
@@ -75,6 +76,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
             return (
               <ButtonGroup className="w-100 rounded-0" key={channel.id}>
                 <Button
+                  type="button"
                   variant={buttonVariant}
                   className={btnClasses}
                   onClick={() => setActiveChannelId(channel.id)}
