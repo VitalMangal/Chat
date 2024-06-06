@@ -32,7 +32,7 @@ const MessagesComponent = ({ activeChannelId }) => {
             <div className="text-break mb-2" key={message.id}>
               <b>{message.username}</b>
               :
-              {message.body}
+              {` ${message.body}`}
             </div>
           ))}
         </div>

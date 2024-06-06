@@ -37,7 +37,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
 
   const channelsNames = data.map((channel) => channel.name);
 
-  const addSubmit = async (values) => {
+  const addSubmit = async (values, actions) => {
     setIsLoading(true);
     try {
       const filtered = filter.clean(values.name);
@@ -46,8 +46,10 @@ const Add = ({ setActiveChannelId, closeModal }) => {
       closeModal();
       setIsLoading(false);
       toast.success(t('modal.add.added'));
+      actions.resetForm();
     } catch (err) {
       setIsLoading(false);
+      actions.setSubmitting(false);
       toast.error(t('modal.add.errors.notAdded'));
     }
   };
