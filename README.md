@@ -43,6 +43,4 @@ make install
 make develop
 ```
 
-_ Вы можете попробовать UI/UX-приложение React, нажав на ссылку ниже!_ 👇🏻
-
-[_**Click me**_](https://frontend-project-12-chat.onrender.com/)
+[_**Ссылка на проект**_](https://frontend-project-12-chat.onrender.com/)
