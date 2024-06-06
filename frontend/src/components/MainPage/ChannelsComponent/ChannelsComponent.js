@@ -3,7 +3,6 @@ import {
   ButtonToolbar,
   Button,
   ButtonGroup,
-  DropdownButton,
   Dropdown,
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
@@ -74,7 +73,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
               );
             }
             return (
-              <ButtonGroup className="w-100 rounded-0" key={channel.id}>
+              <Dropdown as={ButtonGroup} id="dropdown" className="w-100 rounded-0" key={channel.id}>
                 <Button
                   type="button"
                   variant={buttonVariant}
@@ -84,11 +83,14 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
                   <span className="me-1">#</span>
                   {channel.name}
                 </Button>
-                <DropdownButton as={ButtonGroup} variant={buttonVariant} title="" id="dropdown" aria-label={t('channels.management')}>
+                <Dropdown.Toggle split className="flex-grow-0" variant={buttonVariant}>
+                  <span className="visually-hidden">{t('channels.management')}</span>
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
                   <Dropdown.Item eventKey="1" onClick={() => openModal('remove', channel)}>{t('channels.remove')}</Dropdown.Item>
                   <Dropdown.Item eventKey="2" onClick={() => openModal('rename', channel)}>{t('channels.rename')}</Dropdown.Item>
-                </DropdownButton>
-              </ButtonGroup>
+                </Dropdown.Menu>
+              </Dropdown>
             );
           })}
         </ButtonToolbar>
@@ -99,3 +101,14 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
 };
 
 export default ChannelsComponent;
+
+/*
+
+<DropdownButton as={ButtonGroup} variant={buttonVariant} title="" id="dropdown">
+  <span className="visually-hidden">{t('channels.management')}</span>
+  <Dropdown.Item eventKey="1" onClick={() => openModal('remove', channel)}>{t('channels.remove')}
+  </Dropdown.Item>
+  <Dropdown.Item eventKey="2" onClick={() => openModal('rename', channel)}>{t('channels.rename')}
+  </Dropdown.Item>
+</DropdownButton>
+*/
