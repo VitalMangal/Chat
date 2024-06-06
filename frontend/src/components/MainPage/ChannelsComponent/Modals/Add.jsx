@@ -46,11 +46,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
       closeModal();
       setIsLoading(false);
       toast.success(t('modal.add.added'));
-      actions.resetForm({
-        values: {
-          name: '',
-        },
-      });
+      actions.resetForm();
     } catch (err) {
       setIsLoading(false);
       actions.setSubmitting(false);
@@ -75,14 +71,13 @@ const Add = ({ setActiveChannelId, closeModal }) => {
             handleSubmit, handleChange, values, touched, errors,
           }) => (
             <Form onSubmit={handleSubmit}>
-              <Form.Group>
+              <Form.Group controlId="name">
                 <Form.Control
                   required
                   ref={inputRef}
                   onChange={handleChange}
                   value={values.name}
                   name="name"
-                  id="name"
                   isInvalid={touched.name && !!errors.name}
                   type="text"
                   disabled={isLoading}

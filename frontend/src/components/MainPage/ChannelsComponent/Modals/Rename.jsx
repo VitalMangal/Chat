@@ -67,14 +67,13 @@ const Rename = ({ modalInfo, closeModal }) => {
             handleSubmit, handleChange, values, touched, errors,
           }) => (
             <Form onSubmit={handleSubmit}>
-              <Form.Group>
+              <Form.Group controlId="name">
                 <Form.Control
                   required
                   ref={inputRef}
                   onChange={handleChange}
                   value={values.name}
                   name="name"
-                  id="name"
                   isInvalid={touched.name && !!errors.name}
                   type="text"
                   disabled={isLoading}
