@@ -32,7 +32,7 @@ const LoggedRoute = ({ children }) => {
   const auth = useContext(authContext);
 
   return (
-    auth.loggedIn ? <Navigate to="/" state={{ from: location }}/> : children 
+    auth.loggedIn ? <Navigate to="/" state={{ from: location }} /> : children
   );
 };
 
@@ -49,22 +49,30 @@ const App = () => {
             </div>
           </Navbar>
           <Routes>
-            <Route path="/" element={(
+            <Route
+              path="/"
+              element={(
                 <PrivateRoute>
                   <MainPage />
                 </PrivateRoute>
               )}
             />
-            <Route path="/login" element={(
-              <LoggedRoute>
-                <Login />
-              </LoggedRoute>            
-            )} />
-            <Route path="/signup" element={(
-              <LoggedRoute>
-                <SignUp />    
-              </LoggedRoute>            
-            )} />
+            <Route
+              path="/login"
+              element={(
+                <LoggedRoute>
+                  <Login />
+                </LoggedRoute>
+            )}
+            />
+            <Route
+              path="/signup"
+              element={(
+                <LoggedRoute>
+                  <SignUp />
+                </LoggedRoute>
+            )}
+            />
             <Route path="*" element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
