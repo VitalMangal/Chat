@@ -46,7 +46,11 @@ const Add = ({ setActiveChannelId, closeModal }) => {
       closeModal();
       setIsLoading(false);
       toast.success(t('modal.add.added'));
-      actions.resetForm();
+      actions.resetForm({
+        values: {
+          name: '',
+        },
+      });
     } catch (err) {
       setIsLoading(false);
       actions.setSubmitting(false);
