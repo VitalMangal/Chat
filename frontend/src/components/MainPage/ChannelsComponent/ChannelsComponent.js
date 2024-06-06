@@ -86,6 +86,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
                 </Button>
 
                 <DropdownButton as={ButtonGroup} variant={buttonVariant} title="" id="dropdown">
+                  <span class="visually-hidden">Управление каналом</span>
                   <Dropdown.Item eventKey="1" onClick={() => openModal('remove', channel)}>{t('channels.remove')}</Dropdown.Item>
                   <Dropdown.Item eventKey="2" onClick={() => openModal('rename', channel)}>{t('channels.rename')}</Dropdown.Item>
                 </DropdownButton>
