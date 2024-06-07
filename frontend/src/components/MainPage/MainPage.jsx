@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
-import ChannelsComponent from './ChannelsComponent';
-import MessagesComponent from './MessagesComponent';
+import ChannelsComponent from './ChannelsComponent/ChannelsComponent.js';
+import MessagesComponent from './MessagesComponent/MessagesComponent.js';
 import { channelsApi, messagesApi } from '../../redux';
 import socket from '../../assets/socket.js';
 
