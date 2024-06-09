@@ -1,4 +1,6 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, {
+  useEffect, useState, useRef, useContext,
+} from 'react';
 import * as formik from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
 import * as yup from 'yup';
@@ -8,7 +10,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 import { useGetChannelsQuery, useAddChannelMutation } from '../../../../redux';
-import filter from '../../../../utils/leo-profanity';
+import DataContext from '../../../../context/DataContext.js';
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({
@@ -24,6 +26,7 @@ const getSchema = (channels) => {
 
 const Add = ({ setActiveChannelId, closeModal }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { filter } = useContext(DataContext);
   const { t } = useTranslation();
   const { Formik } = formik;
 
@@ -82,7 +85,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
                   type="text"
                   disabled={isLoading}
                 />
-                <Form.Label htmlFor="name" visuallyHidden>{t('modal.add.label')}</Form.Label>
+                <Form.Label visuallyHidden>{t('modal.add.label')}</Form.Label>
                 <Form.Control.Feedback type="invalid">{errors.name ? t(`modal.add.errors.${errors.name}`) : null}</Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mt-2 d-flex justify-content-end">

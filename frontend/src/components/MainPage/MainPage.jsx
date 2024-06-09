@@ -1,16 +1,17 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useContext } from 'react';
 import { useDispatch } from 'react-redux';
 
 import ChannelsComponent from './ChannelsComponent/ChannelsComponent.js';
 import MessagesComponent from './MessagesComponent/MessagesComponent.js';
 import { channelsApi, messagesApi } from '../../redux';
-import socket from '../../utils/socket.js';
+import DataContext from '../../context/DataContext.js';
 
 const defaultActiveChannelId = '1';
 
 const MainPage = () => {
   const [activeChannelId, setActiveChannelId] = useState(defaultActiveChannelId);
   const dispatch = useDispatch();
+  const { socket } = useContext(DataContext);
 
   useEffect(() => {
     socket.connect();
@@ -18,7 +19,7 @@ const MainPage = () => {
     return () => {
       socket.disconnect();
     };
-  }, []);
+  });
 
   useEffect(() => {
     socket.on('connect', () => {

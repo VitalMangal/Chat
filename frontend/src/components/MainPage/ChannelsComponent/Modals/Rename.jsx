@@ -1,4 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, {
+  useEffect, useRef, useState, useContext,
+} from 'react';
 import * as formik from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
 import * as yup from 'yup';
@@ -6,8 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useGetChannelsQuery, useRenameChannelMutation } from '../../../../redux/index.js';
-
-import filter from '../../../../utils/leo-profanity.js';
+import DataContext from '../../../../context/DataContext.js';
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({
@@ -23,6 +24,7 @@ const getSchema = (channels) => {
 
 const Rename = ({ modalInfo, closeModal }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { filter } = useContext(DataContext);
   const { t } = useTranslation();
   const { Formik } = formik;
 
@@ -78,7 +80,7 @@ const Rename = ({ modalInfo, closeModal }) => {
                   type="text"
                   disabled={isLoading}
                 />
-                <Form.Label htmlFor="name" visuallyHidden>{t('modal.rename.label')}</Form.Label>
+                <Form.Label visuallyHidden>{t('modal.rename.label')}</Form.Label>
                 <Form.Control.Feedback type="invalid">{errors.name ? t(`modal.rename.errors.${errors.name}`) : null}</Form.Control.Feedback>
               </Form.Group>
               <Form.Group className="mt-2 d-flex justify-content-end">

@@ -1,14 +1,17 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, {
+  useState, useEffect, useRef, useContext,
+} from 'react';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { useAddMessageMutation } from '../../../redux/index.js';
-import filter from '../../../utils/leo-profanity.js';
+import DataContext from '../../../context/DataContext.js';
 
 const MessageForm = ({ activeChannelId }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const { filter } = useContext(DataContext);
   const { t } = useTranslation();
 
   const inputRef = useRef();
