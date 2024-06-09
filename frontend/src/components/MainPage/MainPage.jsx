@@ -4,7 +4,7 @@ import { useDispatch } from 'react-redux';
 import ChannelsComponent from './ChannelsComponent/ChannelsComponent.js';
 import MessagesComponent from './MessagesComponent/MessagesComponent.js';
 import { channelsApi, messagesApi } from '../../redux';
-import socket from '../../assets/socket.js';
+import socket from '../../utils/socket.js';
 
 const defaultActiveChannelId = '1';
 
