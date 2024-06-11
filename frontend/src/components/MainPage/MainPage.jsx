@@ -7,9 +7,9 @@ import { channelsApi, messagesApi } from '../../store/index.js';
 import { useData } from '../../hooks';
 
 const MainPage = () => {
-  const [activeChannelId, setActiveChannelId] = useState(process.env.REACT_APP_DEFAULT_CHANNEL_ID);
+  const { socket, defaultActiveChannelId } = useData();
+  const [activeChannelId, setActiveChannelId] = useState(defaultActiveChannelId);
   const dispatch = useDispatch();
-  const { socket } = useData();
 
   useEffect(() => {
     socket.connect();
@@ -41,9 +41,8 @@ const MainPage = () => {
           draftChannels.splice(index, 1);
         }),
       );
-      console.log(activeChannelId, 'activeChannelId');
       if (activeChannelId === payload.id) {
-        setActiveChannelId(process.env.REACT_APP_DEFAULT_CHANNEL_ID);
+        setActiveChannelId(defaultActiveChannelId);
       }
     });
     socket.on('renameChannel', (payload) => {
@@ -66,7 +65,7 @@ const MainPage = () => {
       socket.off('removeChannel');
       socket.off('renameChannel');
     };
-  }, [activeChannelId, dispatch, socket]);
+  }, [activeChannelId, dispatch, socket, defaultActiveChannelId]);
 
   return (
     <div className="container h-100 my-4 overflow-hidden rounded shadow">

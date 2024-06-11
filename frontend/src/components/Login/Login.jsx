@@ -3,8 +3,10 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import logo from '../../assets/pictures/loginImg.jpeg';
 import LoginForm from './LoginForm.jsx';
+import { useData } from '../../hooks';
 
 const Login = () => {
+  const { pages } = useData();
   const { t } = useTranslation();
   return (
     <div className="container-fluid h-100">
@@ -21,7 +23,7 @@ const Login = () => {
               <div className="text-center">
                 <span>{t('login.doNotHaveAnAccount')}</span>
                 {' '}
-                <Link to="/signup">{t('login.registration')}</Link>
+                <Link to={pages.signUp}>{t('login.registration')}</Link>
               </div>
             </div>
           </div>

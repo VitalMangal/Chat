@@ -7,10 +7,11 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-import { useAuth } from '../../hooks';
+import { useAuth, useData } from '../../hooks';
 import { useSignUpUserMutation } from '../../store/index.js';
 
 const SignUpForm = () => {
+  const { pages } = useData();
   const [signUpUser, { isLoading, error: signUpUserError }] = useSignUpUserMutation();
   const { Formik } = formik;
   const auth = useAuth();
@@ -59,7 +60,7 @@ const SignUpForm = () => {
     const response = await signUpUser(newUser).unwrap();
     const newData = { ...response, userLoggedIn: true };
     auth.logIn(newData);
-    await navigate(process.env.REACT_APP_MAIN_PAGE_URL);
+    await navigate(pages.main);
   };
 
   return (

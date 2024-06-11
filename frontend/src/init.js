@@ -13,8 +13,10 @@ import DataContext from './context/DataContext.js';
 import App from './components/App.js';
 import { store } from './store/index.js';
 import rollbarConfig from './utils/rollbarConfig.js';
+import pages from './assets/pages.js';
 
 export default async () => {
+  const defaultActiveChannelId = '1';
   const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:3000';
   const socket = io(URL, {
     autoConnect: false,
@@ -40,7 +42,10 @@ export default async () => {
         <ErrorBoundary>
           <Provider store={store}>
             <I18nextProvider i18n={i18next} defaultNS="translation">
-              <DataContext.Provider value={{ filter, socket }}>
+              <DataContext.Provider value={{
+                filter, socket, defaultActiveChannelId, pages,
+              }}
+              >
                 <AuthProvider>
                   <App />
                 </AuthProvider>

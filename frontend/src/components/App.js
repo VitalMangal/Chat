@@ -16,31 +16,34 @@ import MainPage from './MainPage/MainPage.jsx';
 import PageNotFound from './PageNotFound.jsx';
 import AuthButton from './AuthButton.js';
 
-import { useAuth } from '../hooks';
+import { useAuth, useData } from '../hooks';
 
 const PrivateRoute = ({ children }) => {
+  const { pages } = useData();
   const location = useLocation();
   const auth = useAuth();
 
   return (
     auth.loggedIn
       ? children
-      : <Navigate to={process.env.REACT_APP_LOGIN_PAGE_URL} state={{ from: location }} />
+      : <Navigate to={pages.login} state={{ from: location }} />
   );
 };
 
 const LoggedRoute = ({ children }) => {
+  const { pages } = useData();
   const location = useLocation();
   const auth = useAuth();
 
   return (
     auth.loggedIn
-      ? <Navigate to={process.env.REACT_APP_MAIN_PAGE_URL} state={{ from: location }} />
+      ? <Navigate to={pages.main} state={{ from: location }} />
       : children
   );
 };
 
 const App = () => {
+  const { pages } = useData();
   const { t } = useTranslation();
   return (
     <>
@@ -48,13 +51,13 @@ const App = () => {
         <BrowserRouter>
           <Navbar bg="white" expand="lg" className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
             <div className="container">
-              <Navbar.Brand as={Link} to={process.env.REACT_APP_MAIN_PAGE_URL}>{t('app.label')}</Navbar.Brand>
+              <Navbar.Brand as={Link} to={pages.main}>{t('app.label')}</Navbar.Brand>
               <AuthButton />
             </div>
           </Navbar>
           <Routes>
             <Route
-              path={process.env.REACT_APP_MAIN_PAGE_URL}
+              path={pages.main}
               element={(
                 <PrivateRoute>
                   <MainPage />
@@ -62,7 +65,7 @@ const App = () => {
               )}
             />
             <Route
-              path={process.env.REACT_APP_LOGIN_PAGE_URL}
+              path={pages.login}
               element={(
                 <LoggedRoute>
                   <Login />
@@ -70,14 +73,14 @@ const App = () => {
             )}
             />
             <Route
-              path={process.env.REACT_APP_SIGNUP_PAGE_URL}
+              path={pages.signUp}
               element={(
                 <LoggedRoute>
                   <SignUp />
                 </LoggedRoute>
             )}
             />
-            <Route path={process.env.REACT_APP_NOTFOUND_PAGE_URL} element={<PageNotFound />} />
+            <Route path={pages.notFound} element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
       </div>

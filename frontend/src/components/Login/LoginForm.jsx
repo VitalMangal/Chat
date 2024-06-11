@@ -7,10 +7,11 @@ import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import { useAuth } from '../../hooks';
+import { useAuth, useData } from '../../hooks';
 import { useLoginUserMutation } from '../../store/index.js';
 
 const LoginForm = () => {
+  const { pages } = useData();
   const [loginUser, { isLoading, error: loginUserError }] = useLoginUserMutation();
   const { t } = useTranslation();
   const auth = useAuth();
@@ -45,7 +46,7 @@ const LoginForm = () => {
       const response = await loginUser(values).unwrap();
       const newData = { ...response, userLoggedIn: true };
       auth.logIn(newData);
-      await navigate(process.env.REACT_APP_MAIN_PAGE_URL);
+      await navigate(pages.main);
     },
   });
 
