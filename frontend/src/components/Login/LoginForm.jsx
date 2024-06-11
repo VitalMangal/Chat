@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useRef, useState, useContext,
+  useEffect, useRef, useState,
 } from 'react';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
@@ -7,13 +7,13 @@ import { useTranslation } from 'react-i18next';
 import { useFormik } from 'formik';
 import * as yup from 'yup';
 
-import authContext from '../../context/AuthContext.js';
+import { useAuth } from '../../hooks';
 import { useLoginUserMutation } from '../../store/index.js';
 
 const LoginForm = () => {
   const [loginUser, { isLoading, error: loginUserError }] = useLoginUserMutation();
   const { t } = useTranslation();
-  const auth = useContext(authContext);
+  const auth = useAuth();
   const navigate = useNavigate();
   const inputRef = useRef();
   const [authFailed, setAuthFailed] = useState(false);

@@ -6,7 +6,7 @@ import {
   Navigate,
   Link,
 } from 'react-router-dom';
-import React, { useContext } from 'react';
+import React from 'react';
 import { Navbar } from 'react-bootstrap';
 import { ToastContainer } from 'react-toastify';
 import { useTranslation } from 'react-i18next';
@@ -16,11 +16,11 @@ import MainPage from './MainPage/MainPage.jsx';
 import PageNotFound from './PageNotFound.jsx';
 import AuthButton from './AuthButton.js';
 
-import authContext from '../context/AuthContext.js';
+import { useAuth } from '../hooks';
 
 const PrivateRoute = ({ children }) => {
   const location = useLocation();
-  const auth = useContext(authContext);
+  const auth = useAuth();
 
   return (
     auth.loggedIn
@@ -31,7 +31,7 @@ const PrivateRoute = ({ children }) => {
 
 const LoggedRoute = ({ children }) => {
   const location = useLocation();
-  const auth = useContext(authContext);
+  const auth = useAuth();
 
   return (
     auth.loggedIn

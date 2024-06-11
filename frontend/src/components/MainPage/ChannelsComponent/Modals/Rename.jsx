@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useRef, useContext,
+  useEffect, useRef,
 } from 'react';
 import { Formik } from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
@@ -7,7 +7,7 @@ import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 import { useGetChannelsQuery, useRenameChannelMutation } from '../../../../store/index.js';
-import DataContext from '../../../../context/DataContext.js';
+import { useData } from '../../../../hooks';
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({
@@ -22,7 +22,7 @@ const getSchema = (channels) => {
 };
 
 const Rename = ({ modalInfo, closeModal }) => {
-  const { filter } = useContext(DataContext);
+  const { filter } = useData();
   const { t } = useTranslation();
 
   const { data, isLoading } = useGetChannelsQuery();

@@ -1,10 +1,11 @@
-export default () => {
-  const userData = JSON.parse(localStorage.getItem('userData'));
-  console.log(userData, 'userData');
-  if (userData) {
-    const { token } = userData;
-    return { Authorization: `Bearer ${token}` };
+import { useStorageGetItem } from '../hooks';
+
+export default (headers) => {
+  const userData = JSON.parse(useStorageGetItem());
+  const { token } = userData;
+  if (token) {
+    headers.set('Authorization', `Bearer ${token}`);
   }
 
-  return null;
+  return headers;
 };

@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useRef, useContext,
+  useEffect, useRef,
 } from 'react';
 import { Formik } from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
@@ -8,7 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
 import { useGetChannelsQuery, useAddChannelMutation } from '../../../../store/index.js';
-import DataContext from '../../../../context/DataContext.js';
+import { useData } from '../../../../hooks/useContext.js';
 
 const getSchema = (channels) => {
   const schema = yup.object().shape({
@@ -23,7 +23,7 @@ const getSchema = (channels) => {
 };
 
 const Add = ({ setActiveChannelId, closeModal }) => {
-  const { filter } = useContext(DataContext);
+  const { filter } = useData();
   const { t } = useTranslation();
 
   const { data, isLoading } = useGetChannelsQuery();
@@ -108,21 +108,3 @@ const Add = ({ setActiveChannelId, closeModal }) => {
 };
 
 export default Add;
-
-/*
-const addSubmit = (values, actions) => {
-  const filtered = filter.clean(values.name);
-  addChannel({ name: filtered })
-    .unwrap()
-    .then((payload) => {
-      setActiveChannelId(payload.id);
-      closeModal();
-      toast.success(t('modal.add.added'));
-      actions.resetForm();
-    })
-    .catch(() => {
-      actions.setSubmitting(false);
-      toast.error(t('modal.add.errors.notAdded'));
-    });
-};
-*/

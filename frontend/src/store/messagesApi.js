@@ -1,18 +1,12 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react';
 import routes from '../utils/routes.js';
+import getHeaders from '../utils/getHeaders.js';
 
 export const messagesApi = createApi({
   reducerPath: 'messages',
   baseQuery: fetchBaseQuery({
     baseUrl: routes.messagesPath(),
-    prepareHeaders: (headers) => {
-      const userData = JSON.parse(localStorage.getItem('userData'));
-      const { token } = userData;
-      if (token) {
-        headers.set('Authorization', `Bearer ${token}`);
-      }
-      return headers;
-    },
+    prepareHeaders: (headers) => getHeaders(headers),
   }),
   endpoints: (builder) => ({
     getMessages: builder.query({

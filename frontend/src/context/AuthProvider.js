@@ -1,20 +1,22 @@
 import React, { useState, useMemo } from 'react';
 import AuthContext from './AuthContext.js';
+import { useStorageGetItem, useStorageSetItem, useStorageRemoveItem } from '../hooks';
 
 const AuthProvider = ({ children }) => {
-  const userData = JSON.parse(localStorage.getItem('userData'));
+  const userData = JSON.parse(useStorageGetItem());
   const [loggedIn, setLoggedIn] = useState(userData ? userData.userLoggedIn : false);
 
-  const logIn = (data) => {
-    localStorage.setItem('userData', JSON.stringify(data));
+  const useLogIn = (data) => {
+    useStorageSetItem(data);
     setLoggedIn(true);
   };
 
-  const logOut = () => {
-    localStorage.removeItem('userData');
+  const useLogOut = () => {
+    useStorageRemoveItem();
     setLoggedIn(false);
   };
-  const props = useMemo(() => ({ loggedIn, logIn, logOut }), [loggedIn]);
+
+  const props = useMemo(() => ({ loggedIn, logIn: useLogIn, logOut: useLogOut }), [loggedIn]);
   return (
     <AuthContext.Provider value={props}>
       {children}

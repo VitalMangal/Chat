@@ -1,5 +1,5 @@
 import React, {
-  useEffect, useRef, useState, useContext,
+  useEffect, useRef, useState,
 } from 'react';
 import * as formik from 'formik';
 import { Button, Form } from 'react-bootstrap';
@@ -7,13 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
-import authContext from '../../context/AuthContext.js';
+import { useAuth } from '../../hooks';
 import { useSignUpUserMutation } from '../../store/index.js';
 
 const SignUpForm = () => {
   const [signUpUser, { isLoading, error: signUpUserError }] = useSignUpUserMutation();
   const { Formik } = formik;
-  const auth = useContext(authContext);
+  const auth = useAuth();
   const navigate = useNavigate();
   const inputRef = useRef();
   const [submitError, setSubmitError] = useState(null);

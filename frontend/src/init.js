@@ -38,7 +38,7 @@ export default async () => {
     <React.StrictMode>
       <RollbarProvider config={rollbarConfig}>
         <ErrorBoundary>
-          <Provider store={store} filter={filter}>
+          <Provider store={store}>
             <I18nextProvider i18n={i18next} defaultNS="translation">
               <DataContext.Provider value={{ filter, socket }}>
                 <AuthProvider>

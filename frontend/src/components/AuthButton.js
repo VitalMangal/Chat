@@ -1,10 +1,10 @@
-import React, { useContext } from 'react';
+import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { Button } from 'react-bootstrap';
-import authContext from '../context/AuthContext.js';
+import { useAuth } from '../hooks';
 
 const AuthButton = () => {
-  const auth = useContext(authContext);
+  const auth = useAuth();
   const { t } = useTranslation();
 
   return (

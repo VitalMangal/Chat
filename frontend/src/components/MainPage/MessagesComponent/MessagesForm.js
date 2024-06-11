@@ -1,17 +1,18 @@
 import React, {
-  useEffect, useRef, useContext,
+  useEffect, useRef,
 } from 'react';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useAddMessageMutation } from '../../../store/index.js';
-import DataContext from '../../../context/DataContext.js';
+import { useData, useStorageGetItem } from '../../../hooks';
 
 const MessageForm = ({ activeChannelId }) => {
-  const { filter } = useContext(DataContext);
+  const { filter } = useData();
   const { t } = useTranslation();
   const [addMessage, { isLoading, error }] = useAddMessageMutation();
+  const { username } = JSON.parse(useStorageGetItem());
 
   const inputRef = useRef();
   useEffect(() => {
@@ -29,7 +30,6 @@ const MessageForm = ({ activeChannelId }) => {
       body: '',
     },
     onSubmit: async () => {
-      const { username } = JSON.parse(localStorage.getItem('userData'));
       const filteredBody = filter.clean(formik.values.body);
       await addMessage({ body: filteredBody, channelId: activeChannelId, username });
       formik.resetForm();
