@@ -1,13 +1,12 @@
 import React, {
-  useEffect, useRef, useState, useContext,
+  useEffect, useRef, useContext,
 } from 'react';
-import * as formik from 'formik';
+import { Formik } from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useGetChannelsQuery, useRenameChannelMutation } from '../../../../redux/index.js';
+import { useGetChannelsQuery, useRenameChannelMutation } from '../../../../store/index.js';
 import DataContext from '../../../../context/DataContext.js';
 
 const getSchema = (channels) => {
@@ -23,33 +22,32 @@ const getSchema = (channels) => {
 };
 
 const Rename = ({ modalInfo, closeModal }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const { filter } = useContext(DataContext);
   const { t } = useTranslation();
-  const { Formik } = formik;
 
-  const { data } = useGetChannelsQuery();
+  const { data, isLoading } = useGetChannelsQuery();
   const channelsNames = data.map((channel) => channel.name);
 
-  const [renameChannel] = useRenameChannelMutation();
+  const [renameChannel, { error }] = useRenameChannelMutation();
 
   const inputRef = useRef();
   useEffect(() => {
     inputRef.current.select();
+    inputRef.current.focus();
   }, []);
 
-  const renameSubmit = async (values) => {
-    setIsLoading(true);
-    try {
-      const filtered = filter.clean(values.name);
-      await renameChannel({ id: modalInfo.channel.id, body: { name: filtered } });
-      closeModal();
-      setIsLoading(false);
-      toast.success(t('modal.rename.renamed'));
-    } catch (err) {
-      setIsLoading(false);
+  useEffect(() => {
+    if (error) {
       toast.error(t('modal.rename.errors.notRenamed'));
     }
+  }, [error, t]);
+
+  const renameSubmit = async (values, actions) => {
+    const filtered = filter.clean(values.name);
+    await renameChannel({ id: modalInfo.channel.id, body: { name: filtered } });
+    closeModal();
+    toast.success(t('modal.rename.renamed'));
+    actions.resetForm();
   };
 
   return (

@@ -5,7 +5,11 @@ const AuthProvider = ({ children }) => {
   const userData = JSON.parse(localStorage.getItem('userData'));
   const [loggedIn, setLoggedIn] = useState(userData ? userData.userLoggedIn : false);
 
-  const logIn = () => setLoggedIn(true);
+  const logIn = (data) => {
+    localStorage.setItem('userData', JSON.stringify(data));
+    setLoggedIn(true);
+  };
+
   const logOut = () => {
     localStorage.removeItem('userData');
     setLoggedIn(false);

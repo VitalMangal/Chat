@@ -1,15 +1,13 @@
 import React, {
-  useEffect, useState, useRef, useContext,
+  useEffect, useRef, useContext,
 } from 'react';
-import * as formik from 'formik';
+import { Formik } from 'formik';
 import { Modal, Button, Form } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
-import 'react-toastify/dist/ReactToastify.css';
-
-import { useGetChannelsQuery, useAddChannelMutation } from '../../../../redux';
+import { useGetChannelsQuery, useAddChannelMutation } from '../../../../store/index.js';
 import DataContext from '../../../../context/DataContext.js';
 
 const getSchema = (channels) => {
@@ -25,36 +23,32 @@ const getSchema = (channels) => {
 };
 
 const Add = ({ setActiveChannelId, closeModal }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const { filter } = useContext(DataContext);
   const { t } = useTranslation();
-  const { Formik } = formik;
 
-  const { data } = useGetChannelsQuery();
-  const [addChannel] = useAddChannelMutation();
+  const { data, isLoading } = useGetChannelsQuery();
+  const [addChannel, { error }] = useAddChannelMutation();
 
   const inputRef = useRef();
   useEffect(() => {
     inputRef.current.focus();
   }, []);
 
+  useEffect(() => {
+    if (error) {
+      toast.error(t('modal.add.errors.notAdded'));
+    }
+  }, [error, t]);
+
   const channelsNames = data.map((channel) => channel.name);
 
   const addSubmit = async (values, actions) => {
-    setIsLoading(true);
-    try {
-      const filtered = filter.clean(values.name);
-      const resp = await addChannel({ name: filtered });
-      setActiveChannelId(resp.data.id);
-      closeModal();
-      setIsLoading(false);
-      toast.success(t('modal.add.added'));
-      actions.resetForm();
-    } catch (err) {
-      setIsLoading(false);
-      actions.setSubmitting(false);
-      toast.error(t('modal.add.errors.notAdded'));
-    }
+    const filtered = filter.clean(values.name);
+    const resp = await addChannel({ name: filtered });
+    setActiveChannelId(resp.data.id);
+    closeModal();
+    toast.success(t('modal.add.added'));
+    actions.resetForm();
   };
 
   return (
@@ -114,3 +108,21 @@ const Add = ({ setActiveChannelId, closeModal }) => {
 };
 
 export default Add;
+
+/*
+const addSubmit = (values, actions) => {
+  const filtered = filter.clean(values.name);
+  addChannel({ name: filtered })
+    .unwrap()
+    .then((payload) => {
+      setActiveChannelId(payload.id);
+      closeModal();
+      toast.success(t('modal.add.added'));
+      actions.resetForm();
+    })
+    .catch(() => {
+      actions.setSubmitting(false);
+      toast.error(t('modal.add.errors.notAdded'));
+    });
+};
+*/

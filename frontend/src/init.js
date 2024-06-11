@@ -11,7 +11,7 @@ import AuthProvider from './context/AuthProvider.js';
 import DataContext from './context/DataContext.js';
 
 import App from './components/App.js';
-import { store } from './redux';
+import { store } from './store/index.js';
 import rollbarConfig from './utils/rollbarConfig.js';
 
 export default async () => {

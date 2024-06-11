@@ -1,13 +1,14 @@
 import { configureStore, isRejectedWithValue } from '@reduxjs/toolkit';
 import { toast } from 'react-toastify';
+import { useRollbar } from '@rollbar/react';
 import { channelsApi } from './channelsApi.js';
 import { messagesApi } from './messagesApi.js';
 import { usersApi } from './usersApi.js';
 
 export const rtkQueryErrorLogger = () => (next) => (action) => {
   if (isRejectedWithValue(action)) {
-    // не знаю как правильно выводить ошибки, т.к. их много видов
-    console.warn('We got a rejected action!');
+    const rollbar = useRollbar();
+    rollbar.error(`We got a rejected action: ${action}`);
     toast.error(`Ошибка ${action?.payload?.data?.error}`);
   }
   return next(action);

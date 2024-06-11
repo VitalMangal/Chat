@@ -1,46 +1,38 @@
 import React, {
-  useState, useEffect, useRef, useContext,
+  useEffect, useRef, useContext,
 } from 'react';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useAddMessageMutation } from '../../../redux/index.js';
+import { useAddMessageMutation } from '../../../store/index.js';
 import DataContext from '../../../context/DataContext.js';
 
 const MessageForm = ({ activeChannelId }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const { filter } = useContext(DataContext);
   const { t } = useTranslation();
+  const [addMessage, { isLoading, error }] = useAddMessageMutation();
 
   const inputRef = useRef();
   useEffect(() => {
     inputRef.current.focus();
   }, [activeChannelId, isLoading]);
 
-  const [addMessage] = useAddMessageMutation();
+  useEffect(() => {
+    if (error) {
+      toast.error(t('messages.errors.send'));
+    }
+  }, [error, t]);
 
   const formik = useFormik({
     initialValues: {
       body: '',
-      channelId: '',
-      username: '',
     },
-    onSubmit: async (values) => {
-      setIsLoading(true);
-      try {
-        const { username } = JSON.parse(localStorage.getItem('userData'));
-        formik.values.username = username;
-        formik.values.channelId = activeChannelId;
-        formik.values.body = filter.clean(formik.values.body);
-        await addMessage(values);
-        formik.resetForm();
-        setIsLoading(false);
-      } catch (err) {
-        setIsLoading(false);
-        toast.error(t('messages.errors.send'));
-      }
+    onSubmit: async () => {
+      const { username } = JSON.parse(localStorage.getItem('userData'));
+      const filteredBody = filter.clean(formik.values.body);
+      await addMessage({ body: filteredBody, channelId: activeChannelId, username });
+      formik.resetForm();
     },
   });
 

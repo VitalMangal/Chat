@@ -1,9 +1,8 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 
-import { useGetChannelsQuery, useGetMessagesQuery } from '../../../redux/index.js';
+import { useGetChannelsQuery, useGetMessagesQuery } from '../../../store/index.js';
 import MessageForm from './MessagesForm.js';
 
 const MessagesComponent = ({ activeChannelId }) => {

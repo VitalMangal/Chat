@@ -1,6 +1,6 @@
 import React from 'react';
 
-import regLogo from '../../pictures/RegImg.jpg';
+import regLogo from '../../assets/pictures/RegImg.jpg';
 import SignUpForm from './SignUpForm.jsx';
 
 const SignUp = () => (

@@ -8,16 +8,15 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 
 import authContext from '../../context/AuthContext.js';
-import { useLoginUserMutation } from '../../redux';
+import { useLoginUserMutation } from '../../store/index.js';
 
 const LoginForm = () => {
-  const [loginUser] = useLoginUserMutation();
+  const [loginUser, { isLoading, error: loginUserError }] = useLoginUserMutation();
   const { t } = useTranslation();
   const auth = useContext(authContext);
   const navigate = useNavigate();
   const inputRef = useRef();
   const [authFailed, setAuthFailed] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const formSchema = yup.object().shape({
     username: yup.string().required(t('login.errors.required')).trim(),
@@ -28,34 +27,25 @@ const LoginForm = () => {
     inputRef.current.focus();
   }, []);
 
+  useEffect(() => {
+    if (loginUserError?.status === 401) {
+      setAuthFailed(true);
+      inputRef.current.select();
+    }
+  }, [loginUserError, t]);
+
   const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
     validationSchema: formSchema,
-    onSubmit: (values) => {
-      setIsLoading(true);
+    onSubmit: async (values) => {
       setAuthFailed(false);
-
-      loginUser(values).unwrap()
-        .then((response) => {
-          const newData = { ...response, userLoggedIn: true };
-          localStorage.setItem('userData', JSON.stringify(newData));
-          auth.logIn();
-          setIsLoading(false);
-          navigate('/');
-        })
-        .catch((error) => {
-          setIsLoading(false);
-          formik.setSubmitting(false);
-          if (error.status === 401) {
-            setAuthFailed(true);
-            inputRef.current.select();
-            return;
-          }
-          throw error;
-        });
+      const response = await loginUser(values).unwrap();
+      const newData = { ...response, userLoggedIn: true };
+      auth.logIn(newData);
+      await navigate(process.env.REACT_APP_MAIN_PAGE_URL);
     },
   });
 

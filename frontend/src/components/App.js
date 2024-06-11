@@ -23,7 +23,9 @@ const PrivateRoute = ({ children }) => {
   const auth = useContext(authContext);
 
   return (
-    auth.loggedIn ? children : <Navigate to="/login" state={{ from: location }} />
+    auth.loggedIn
+      ? children
+      : <Navigate to={process.env.REACT_APP_LOGIN_PAGE_URL} state={{ from: location }} />
   );
 };
 
@@ -32,7 +34,9 @@ const LoggedRoute = ({ children }) => {
   const auth = useContext(authContext);
 
   return (
-    auth.loggedIn ? <Navigate to="/" state={{ from: location }} /> : children
+    auth.loggedIn
+      ? <Navigate to={process.env.REACT_APP_MAIN_PAGE_URL} state={{ from: location }} />
+      : children
   );
 };
 
@@ -44,13 +48,13 @@ const App = () => {
         <BrowserRouter>
           <Navbar bg="white" expand="lg" className="shadow-sm navbar navbar-expand-lg navbar-light bg-white">
             <div className="container">
-              <Navbar.Brand as={Link} to="/">{t('app.label')}</Navbar.Brand>
+              <Navbar.Brand as={Link} to={process.env.REACT_APP_MAIN_PAGE_URL}>{t('app.label')}</Navbar.Brand>
               <AuthButton />
             </div>
           </Navbar>
           <Routes>
             <Route
-              path="/"
+              path={process.env.REACT_APP_MAIN_PAGE_URL}
               element={(
                 <PrivateRoute>
                   <MainPage />
@@ -58,7 +62,7 @@ const App = () => {
               )}
             />
             <Route
-              path="/login"
+              path={process.env.REACT_APP_LOGIN_PAGE_URL}
               element={(
                 <LoggedRoute>
                   <Login />
@@ -66,14 +70,14 @@ const App = () => {
             )}
             />
             <Route
-              path="/signup"
+              path={process.env.REACT_APP_SIGNUP_PAGE_URL}
               element={(
                 <LoggedRoute>
                   <SignUp />
                 </LoggedRoute>
             )}
             />
-            <Route path="*" element={<PageNotFound />} />
+            <Route path={process.env.REACT_APP_NOTFOUND_PAGE_URL} element={<PageNotFound />} />
           </Routes>
         </BrowserRouter>
       </div>

@@ -8,15 +8,14 @@ import { useTranslation } from 'react-i18next';
 import * as yup from 'yup';
 
 import authContext from '../../context/AuthContext.js';
-import { useSignUpUserMutation } from '../../redux';
+import { useSignUpUserMutation } from '../../store/index.js';
 
 const SignUpForm = () => {
-  const [signUpUser] = useSignUpUserMutation();
+  const [signUpUser, { isLoading, error: signUpUserError }] = useSignUpUserMutation();
   const { Formik } = formik;
   const auth = useContext(authContext);
   const navigate = useNavigate();
   const inputRef = useRef();
-  const [isLoading, setIsLoading] = useState(false);
   const [submitError, setSubmitError] = useState(null);
   const { t } = useTranslation();
 
@@ -47,28 +46,20 @@ const SignUpForm = () => {
     inputRef.current.focus();
   }, []);
 
+  useEffect(() => {
+    if (signUpUserError?.status === 409) {
+      setSubmitError('submitError');
+      inputRef.current.select();
+    }
+  }, [signUpUserError, t]);
+
   const regSubmit = async (values) => {
-    setIsLoading(true);
     setSubmitError(null);
     const { confirmPassword, ...newUser } = values;
-
-    signUpUser(newUser).unwrap()
-      .then((response) => {
-        const newData = { ...response, userLoggedIn: true };
-        localStorage.setItem('userData', JSON.stringify(newData));
-        auth.logIn();
-        setIsLoading(false);
-        navigate('/');
-      })
-      .catch((error) => {
-        setIsLoading(false);
-        if (error.status === 409) {
-          setSubmitError('submitError');
-          inputRef.current.select();
-          return;
-        }
-        throw error;
-      });
+    const response = await signUpUser(newUser).unwrap();
+    const newData = { ...response, userLoggedIn: true };
+    auth.logIn(newData);
+    await navigate(process.env.REACT_APP_MAIN_PAGE_URL);
   };
 
   return (

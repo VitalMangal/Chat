@@ -3,13 +3,11 @@ import { useDispatch } from 'react-redux';
 
 import ChannelsComponent from './ChannelsComponent/ChannelsComponent.js';
 import MessagesComponent from './MessagesComponent/MessagesComponent.js';
-import { channelsApi, messagesApi } from '../../redux';
+import { channelsApi, messagesApi } from '../../store/index.js';
 import DataContext from '../../context/DataContext.js';
 
-const defaultActiveChannelId = '1';
-
 const MainPage = () => {
-  const [activeChannelId, setActiveChannelId] = useState(defaultActiveChannelId);
+  const [activeChannelId, setActiveChannelId] = useState(process.env.REACT_APP_DEFAULT_CHANNEL_ID);
   const dispatch = useDispatch();
   const { socket } = useContext(DataContext);
 
@@ -19,11 +17,9 @@ const MainPage = () => {
     return () => {
       socket.disconnect();
     };
-  });
+  }, [socket]);
 
   useEffect(() => {
-    socket.on('connect', () => {
-    });
     socket.on('newMessage', (payload) => {
       dispatch(
         messagesApi.util.updateQueryData('getMessages', undefined, (draftMessages) => {
@@ -38,22 +34,31 @@ const MainPage = () => {
         }),
       );
     });
-    socket.on('removeChannel', (payload) => dispatch(
-      channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
-        const index = draftChannels.findIndex((ch) => ch.id === payload);
-        draftChannels.splice(index, 1);
-      }),
-    ));
-    socket.on('renameChannel', (payload) => dispatch(
-      channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
-        draftChannels.map((ch) => {
-          if (ch.id === payload.id) {
-            return Object.assign(ch, payload);
-          }
-          return ch;
-        });
-      }),
-    ));
+    socket.on('removeChannel', (payload) => {
+      dispatch(
+        channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
+          const index = draftChannels.findIndex((ch) => ch.id === payload);
+          draftChannels.splice(index, 1);
+        }),
+      );
+      console.log(activeChannelId, 'activeChannelId');
+      console.log(payload, 'payload');
+      if (activeChannelId === payload.id) {
+        setActiveChannelId(process.env.REACT_APP_DEFAULT_CHANNEL_ID);
+      }
+    });
+    socket.on('renameChannel', (payload) => {
+      dispatch(
+        channelsApi.util.updateQueryData('getChannels', undefined, (draftChannels) => {
+          draftChannels.map((ch) => {
+            if (ch.id === payload.id) {
+              return Object.assign(ch, payload);
+            }
+            return ch;
+          });
+        }),
+      );
+    });
 
     return () => {
       socket.off('connect');
@@ -62,7 +67,7 @@ const MainPage = () => {
       socket.off('removeChannel');
       socket.off('renameChannel');
     };
-  });
+  }, [activeChannelId, dispatch, socket]);
 
   return (
     <div className="container h-100 my-4 overflow-hidden rounded shadow">

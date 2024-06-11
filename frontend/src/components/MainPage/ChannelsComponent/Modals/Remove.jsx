@@ -1,32 +1,27 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Modal, Button, Form } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
-import 'react-toastify/dist/ReactToastify.css';
+import { useRemoveChannelMutation } from '../../../../store/index.js';
 
-import { useRemoveChannelMutation } from '../../../../redux/index.js';
-
-const defaultChannelId = '1';
-
-const Remove = ({ modalInfo, setActiveChannelId, closeModal }) => {
+const Remove = ({ modalInfo, closeModal }) => {
   const { t } = useTranslation();
-  const [isLoading, setIsLoading] = useState(false);
-  const [removeChannel] = useRemoveChannelMutation();
+  const [removeChannel, { isLoading, error }] = useRemoveChannelMutation();
+
+  const channelId = modalInfo.channel.id;
+
+  useEffect(() => {
+    if (error) {
+      toast.error(t('modal.remove.notRemoved'));
+    }
+  }, [error, t]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-    try {
-      await removeChannel(modalInfo.channel.id).unwrap();
-      setActiveChannelId(defaultChannelId);
-      setIsLoading(false);
-      closeModal();
-      toast.success(t('modal.remove.removed'));
-    } catch (err) {
-      setIsLoading(false);
-      toast.error(t('modal.remove.notRemoved'));
-    }
+    await removeChannel(channelId);
+    closeModal();
+    toast.success(t('modal.remove.removed'));
   };
 
   return (
