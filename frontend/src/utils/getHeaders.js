@@ -6,6 +6,5 @@ export default (headers) => {
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);
   }
-
   return headers;
 };
