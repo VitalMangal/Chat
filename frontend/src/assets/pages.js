@@ -1,7 +1,7 @@
 const pages = {
   main: '/',
   login: '/login',
-  signUp: '/signUp',
+  signUp: '/signup',
   notFound: '*',
 };
 
