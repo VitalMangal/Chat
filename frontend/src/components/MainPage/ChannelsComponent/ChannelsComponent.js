@@ -5,7 +5,7 @@ import { toast } from 'react-toastify';
 import { useGetChannelsQuery } from '../../../store/index.js';
 
 import getModal from './Modals/index.js';
-import RenderChannels from './RenderChannels.jsx';
+import ChannelsToolbar from './ChannelsToolbar.jsx';
 
 const renderModal = (modalInfo, activeChannelId, setActiveChannelId, closeModal) => {
   if (!modalInfo.type) {
@@ -50,7 +50,7 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
             <span className="visually-hidden">+</span>
           </Button>
         </div>
-        <RenderChannels
+        <ChannelsToolbar
           channels={data}
           openModal={openModal}
           activeChannelId={activeChannelId}

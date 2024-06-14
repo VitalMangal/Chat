@@ -3,10 +3,9 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import logo from '../../assets/pictures/loginImg.jpeg';
 import LoginForm from './LoginForm.jsx';
-import { useData } from '../../hooks';
+import pages from '../../utils/pages.js';
 
 const Login = () => {
-  const { pages } = useData();
   const { t } = useTranslation();
   return (
     <div className="container-fluid h-100">

@@ -14,12 +14,12 @@ import Login from './Login/Login.jsx';
 import SignUp from './SignUp/SignUp.jsx';
 import MainPage from './MainPage/MainPage.jsx';
 import PageNotFound from './PageNotFound.jsx';
-import AuthButton from './AuthButton.js';
+import AuthButton from './AuthButton.jsx';
 
-import { useAuth, useData } from '../hooks';
+import { useAuth } from '../hooks';
+import pages from '../utils/pages.js';
 
 const PrivateRoute = ({ children }) => {
-  const { pages } = useData();
   const location = useLocation();
   const auth = useAuth();
 
@@ -31,7 +31,6 @@ const PrivateRoute = ({ children }) => {
 };
 
 const LoggedRoute = ({ children }) => {
-  const { pages } = useData();
   const location = useLocation();
   const auth = useAuth();
 
@@ -43,7 +42,6 @@ const LoggedRoute = ({ children }) => {
 };
 
 const App = () => {
-  const { pages } = useData();
   const { t } = useTranslation();
   return (
     <>

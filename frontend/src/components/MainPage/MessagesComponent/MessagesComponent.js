@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
 
@@ -10,9 +10,11 @@ const MessagesComponent = ({ activeChannelId }) => {
   const { data: messages = [], error } = useGetMessagesQuery();
   const { data: channels = [] } = useGetChannelsQuery();
 
-  if (error) {
-    toast.error(t('messages.errors.loading'));
-  }
+  useEffect(() => {
+    if (error) {
+      toast.error(t('messages.errors.loading'));
+    }
+  }, [error, t]);
 
   const activeChannel = channels.filter((channel) => channel.id === activeChannelId);
   const messagesFromActiveChannel = messages.filter((mess) => mess.channelId === activeChannelId);

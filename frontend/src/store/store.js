@@ -4,6 +4,7 @@ import Rollbar from 'rollbar';
 import { channelsApi } from './channelsApi.js';
 import { messagesApi } from './messagesApi.js';
 import { usersApi } from './usersApi.js';
+import activeChannelIdReducer from './activeChannelIdSlice.js';
 
 export const rtkQueryErrorLogger = () => (next) => (action) => {
   if (isRejectedWithValue(action)) {
@@ -19,6 +20,7 @@ export const store = configureStore({
     [channelsApi.reducerPath]: channelsApi.reducer,
     [messagesApi.reducerPath]: messagesApi.reducer,
     [usersApi.reducerPath]: usersApi.reducer,
+    activeChannelId: activeChannelIdReducer,
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware()
     .concat(channelsApi.middleware)

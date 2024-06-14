@@ -8,7 +8,7 @@ import {
 import { useTranslation } from 'react-i18next';
 import cn from 'classnames';
 
-const RenderChannels = ({
+const ChannelsToolbar = ({
   channels, openModal, activeChannelId, setActiveChannelId,
 }) => {
   const { t } = useTranslation();
@@ -58,4 +58,4 @@ const RenderChannels = ({
   );
 };
 
-export default RenderChannels;
+export default ChannelsToolbar;

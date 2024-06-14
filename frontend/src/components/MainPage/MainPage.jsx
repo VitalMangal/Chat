@@ -5,9 +5,10 @@ import ChannelsComponent from './ChannelsComponent/ChannelsComponent.js';
 import MessagesComponent from './MessagesComponent/MessagesComponent.js';
 import { channelsApi, messagesApi } from '../../store/index.js';
 import { useData } from '../../hooks';
+import defaultActiveChannelId from '../../utils/defaultActiveChannelId.js';
 
 const MainPage = () => {
-  const { socket, defaultActiveChannelId } = useData();
+  const { socket } = useData();
   const [activeChannelId, setActiveChannelId] = useState(defaultActiveChannelId);
   const dispatch = useDispatch();
 
@@ -65,7 +66,7 @@ const MainPage = () => {
       socket.off('removeChannel');
       socket.off('renameChannel');
     };
-  }, [activeChannelId, dispatch, socket, defaultActiveChannelId]);
+  }, [activeChannelId, dispatch, socket]);
 
   return (
     <div className="container h-100 my-4 overflow-hidden rounded shadow">
