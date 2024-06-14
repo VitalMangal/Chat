@@ -16,7 +16,7 @@ import MainPage from './MainPage/MainPage.jsx';
 import PageNotFound from './PageNotFound.jsx';
 import AuthButton from './AuthButton.jsx';
 
-import { useAuth } from '../hooks';
+import { useAuth } from '../hooks/index.js';
 import pages from '../utils/pages.js';
 
 const PrivateRoute = ({ children }) => {

@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useAddMessageMutation } from '../../../store/index.js';
-import { useData } from '../../../hooks';
+import { useData } from '../../../hooks/index.js';
 import { getStorageItem } from '../../../utils/localStorageFunctions.js';
 
 const MessageForm = () => {

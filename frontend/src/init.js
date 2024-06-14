@@ -9,7 +9,7 @@ import resources from './locales/index.js';
 import AuthProvider from './context/AuthProvider.js';
 import DataProvider from './context/DataProvider.js';
 
-import App from './components/App.js';
+import App from './components/App.jsx';
 import { store } from './store/index.js';
 import rollbarConfig from './utils/rollbarConfig.js';
 

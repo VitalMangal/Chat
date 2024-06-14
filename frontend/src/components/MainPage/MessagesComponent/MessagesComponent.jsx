@@ -4,7 +4,7 @@ import { toast } from 'react-toastify';
 import { useSelector } from 'react-redux';
 
 import { useGetChannelsQuery, useGetMessagesQuery } from '../../../store/index.js';
-import MessageForm from './MessagesForm.js';
+import MessageForm from './MessagesForm.jsx';
 
 const MessagesComponent = () => {
   const { t } = useTranslation();

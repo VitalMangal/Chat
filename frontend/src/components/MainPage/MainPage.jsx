@@ -3,8 +3,8 @@ import { useSelector, useDispatch } from 'react-redux';
 
 import { setActiveChannelId } from '../../store/activeChannelIdSlice.js';
 
-import ChannelsComponent from './ChannelsComponent/ChannelsComponent.js';
-import MessagesComponent from './MessagesComponent/MessagesComponent.js';
+import ChannelsComponent from './ChannelsComponent/ChannelsComponent.jsx';
+import MessagesComponent from './MessagesComponent/MessagesComponent.jsx';
 import { channelsApi, messagesApi } from '../../store/index.js';
 import { useData } from '../../hooks';
 import defaultActiveChannelId from '../../utils/defaultActiveChannelId.js';

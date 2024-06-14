@@ -1,5 +1,5 @@
 const rollbarConfig = {
-  accessToken: process.env.REACT_APP_ROLLBAR_ACCESS_TOKEN,
+  accessToken: process.env.REACT_APP_ROLLBAR_ACCESS_TOKEN ?? '',
   environment: 'production',
 };
 
