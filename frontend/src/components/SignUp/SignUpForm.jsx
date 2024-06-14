@@ -1,7 +1,7 @@
 import React, {
   useEffect, useRef, useState,
 } from 'react';
-import * as formik from 'formik';
+import { Formik } from 'formik';
 import { Button, Form } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
@@ -12,8 +12,7 @@ import { useSignUpUserMutation } from '../../store/index.js';
 import pages from '../../utils/pages.js';
 
 const SignUpForm = () => {
-  const [signUpUser, { isLoading, error: signUpUserError }] = useSignUpUserMutation();
-  const { Formik } = formik;
+  const [signUpUser, { isLoading }] = useSignUpUserMutation();
   const auth = useAuth();
   const navigate = useNavigate();
   const inputRef = useRef();
@@ -47,20 +46,22 @@ const SignUpForm = () => {
     inputRef.current.focus();
   }, []);
 
-  useEffect(() => {
-    if (signUpUserError?.status === 409) {
-      setSubmitError('submitError');
-      inputRef.current.select();
-    }
-  }, [signUpUserError, t]);
-
-  const regSubmit = async (values) => {
+  const regSubmit = (values) => {
     setSubmitError(null);
     const { confirmPassword, ...newUser } = values;
-    const response = await signUpUser(newUser);
-    const newData = { ...response, userLoggedIn: true };
-    auth.logIn(newData);
-    navigate(pages.main);
+    signUpUser(newUser)
+      .unwrap()
+      .then((response) => {
+        const newData = { ...response, userLoggedIn: true };
+        auth.logIn(newData);
+        navigate(pages.main);
+      })
+      .catch((error) => {
+        if (error?.status === 409) {
+          setSubmitError('submitError');
+          inputRef.current.select();
+        }
+      });
   };
 
   return (

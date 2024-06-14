@@ -1,5 +1,7 @@
-import React, { useEffect, useState } from 'react';
-import { useDispatch } from 'react-redux';
+import React, { useEffect } from 'react';
+import { useSelector, useDispatch } from 'react-redux';
+
+import { setActiveChannelId } from '../../store/activeChannelIdSlice.js';
 
 import ChannelsComponent from './ChannelsComponent/ChannelsComponent.js';
 import MessagesComponent from './MessagesComponent/MessagesComponent.js';
@@ -9,8 +11,8 @@ import defaultActiveChannelId from '../../utils/defaultActiveChannelId.js';
 
 const MainPage = () => {
   const { socket } = useData();
-  const [activeChannelId, setActiveChannelId] = useState(defaultActiveChannelId);
   const dispatch = useDispatch();
+  const activeChannelId = useSelector((state) => state.activeChannelId.value);
 
   useEffect(() => {
     socket.connect();
@@ -43,7 +45,7 @@ const MainPage = () => {
         }),
       );
       if (activeChannelId === payload.id) {
-        setActiveChannelId(defaultActiveChannelId);
+        dispatch(setActiveChannelId(defaultActiveChannelId));
       }
     });
     socket.on('renameChannel', (payload) => {
@@ -71,11 +73,8 @@ const MainPage = () => {
   return (
     <div className="container h-100 my-4 overflow-hidden rounded shadow">
       <div className="row h-100 bg-white flex-md-row">
-        <ChannelsComponent
-          activeChannelId={activeChannelId}
-          setActiveChannelId={setActiveChannelId}
-        />
-        <MessagesComponent activeChannelId={activeChannelId} />
+        <ChannelsComponent />
+        <MessagesComponent />
       </div>
     </div>
   );

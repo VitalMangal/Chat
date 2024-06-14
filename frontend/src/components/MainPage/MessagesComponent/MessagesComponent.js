@@ -1,12 +1,14 @@
 import React, { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { useSelector } from 'react-redux';
 
 import { useGetChannelsQuery, useGetMessagesQuery } from '../../../store/index.js';
 import MessageForm from './MessagesForm.js';
 
-const MessagesComponent = ({ activeChannelId }) => {
+const MessagesComponent = () => {
   const { t } = useTranslation();
+  const activeChannelId = useSelector((state) => state.activeChannelId.value);
   const { data: messages = [], error } = useGetMessagesQuery();
   const { data: channels = [] } = useGetChannelsQuery();
 
@@ -38,7 +40,7 @@ const MessagesComponent = ({ activeChannelId }) => {
           ))}
         </div>
         <div className="mt-auto px-5 py-3">
-          <MessageForm activeChannelId={activeChannelId} />
+          <MessageForm />
         </div>
       </div>
     </div>

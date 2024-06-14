@@ -12,7 +12,7 @@ import { useLoginUserMutation } from '../../store/index.js';
 import pages from '../../utils/pages.js';
 
 const LoginForm = () => {
-  const [loginUser, { isLoading, error: loginUserError }] = useLoginUserMutation();
+  const [loginUser, { isLoading }] = useLoginUserMutation();
   const { t } = useTranslation();
   const auth = useAuth();
   const navigate = useNavigate();
@@ -28,25 +28,27 @@ const LoginForm = () => {
     inputRef.current.focus();
   }, []);
 
-  useEffect(() => {
-    if (loginUserError?.status === 401) {
-      setAuthFailed(true);
-      inputRef.current.select();
-    }
-  }, [loginUserError, t]);
-
   const formik = useFormik({
     initialValues: {
       username: '',
       password: '',
     },
     validationSchema: formSchema,
-    onSubmit: async (values) => {
+    onSubmit: (values) => {
       setAuthFailed(false);
-      const response = await loginUser(values);
-      const newData = { ...response, userLoggedIn: true };
-      auth.logIn(newData);
-      await navigate(pages.main);
+      loginUser(values)
+        .unwrap()
+        .then((response) => {
+          const newData = { ...response, userLoggedIn: true };
+          auth.logIn(newData);
+          navigate(pages.main);
+        })
+        .catch((error) => {
+          if (error?.status === 401) {
+            setAuthFailed(true);
+            inputRef.current.select();
+          }
+        });
     },
   });
 

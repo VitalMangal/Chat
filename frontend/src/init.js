@@ -4,24 +4,16 @@ import { Provider } from 'react-redux';
 import { I18nextProvider, initReactI18next } from 'react-i18next';
 import { Provider as RollbarProvider, ErrorBoundary } from '@rollbar/react';
 import i18next from 'i18next';
-import * as filter from 'leo-profanity';
-import { io } from 'socket.io-client';
+import Rollbar from 'rollbar';
 import resources from './locales/index.js';
 import AuthProvider from './context/AuthProvider.js';
-import DataContext from './context/DataContext.js';
+import DataProvider from './context/DataProvider.js';
 
 import App from './components/App.js';
 import { store } from './store/index.js';
 import rollbarConfig from './utils/rollbarConfig.js';
 
 export default async () => {
-  const URL = process.env.NODE_ENV === 'production' ? undefined : 'http://localhost:3000';
-  const socket = io(URL, {
-    autoConnect: false,
-  });
-
-  filter.add(filter.getDictionary('ru'));
-
   await i18next
     .use(initReactI18next)
     .init({
@@ -33,18 +25,20 @@ export default async () => {
       debug: true,
     });
 
+  const rollbar = new Rollbar(rollbarConfig);
+
   const root = ReactDOM.createRoot(document.getElementById('chat'));
   root.render(
     <React.StrictMode>
-      <RollbarProvider config={rollbarConfig}>
+      <RollbarProvider instance={rollbar}>
         <ErrorBoundary>
           <Provider store={store}>
             <I18nextProvider i18n={i18next} defaultNS="translation">
-              <DataContext.Provider value={{ filter, socket }}>
+              <DataProvider>
                 <AuthProvider>
                   <App />
                 </AuthProvider>
-              </DataContext.Provider>
+              </DataProvider>
             </I18nextProvider>
           </Provider>
         </ErrorBoundary>

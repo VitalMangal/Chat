@@ -6,7 +6,9 @@ import { Modal, Button, Form } from 'react-bootstrap';
 import * as yup from 'yup';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'react-toastify';
+import { useDispatch } from 'react-redux';
 
+import { setActiveChannelId } from '../../../../store/activeChannelIdSlice.js';
 import { useGetChannelsQuery, useAddChannelMutation } from '../../../../store/index.js';
 import { useData } from '../../../../hooks/useContext.js';
 
@@ -22,9 +24,10 @@ const getSchema = (channels) => {
   return schema;
 };
 
-const Add = ({ setActiveChannelId, closeModal }) => {
+const Add = ({ closeModal }) => {
   const { filter } = useData();
   const { t } = useTranslation();
+  const dispatch = useDispatch();
 
   const { data, isLoading } = useGetChannelsQuery();
   const [addChannel, { error }] = useAddChannelMutation();
@@ -45,7 +48,7 @@ const Add = ({ setActiveChannelId, closeModal }) => {
   const addSubmit = async (values, actions) => {
     const filtered = filter.clean(values.name);
     const resp = await addChannel({ name: filtered });
-    setActiveChannelId(resp.data.id);
+    dispatch(setActiveChannelId(resp.data.id));
     closeModal();
     toast.success(t('modal.add.added'));
     actions.resetForm();

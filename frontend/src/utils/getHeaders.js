@@ -1,7 +1,7 @@
-import { useStorageGetItem } from '../hooks';
+import { getStorageItem } from './localStorageFunctions';
 
 export default (headers) => {
-  const userData = JSON.parse(useStorageGetItem());
+  const userData = JSON.parse(getStorageItem());
   const { token } = userData;
   if (token) {
     headers.set('Authorization', `Bearer ${token}`);

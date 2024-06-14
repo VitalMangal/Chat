@@ -7,11 +7,15 @@ import {
 } from 'react-bootstrap';
 import { useTranslation } from 'react-i18next';
 import cn from 'classnames';
+import { useSelector, useDispatch } from 'react-redux';
 
-const ChannelsToolbar = ({
-  channels, openModal, activeChannelId, setActiveChannelId,
-}) => {
+import { setActiveChannelId } from '../../../store/activeChannelIdSlice.js';
+
+const ChannelsToolbar = ({ channels, openModal }) => {
   const { t } = useTranslation();
+  const activeChannelId = useSelector((state) => state.activeChannelId.value);
+
+  const dispatch = useDispatch();
 
   return (
     <ButtonToolbar vertical="true" id="channels-box" aria-label="" className="flex-column mb-3 px-2 text-truncate h-100 overflow-auto">
@@ -25,7 +29,7 @@ const ChannelsToolbar = ({
                 type="button"
                 variant={buttonVariant}
                 className={btnClasses}
-                onClick={() => setActiveChannelId(channel.id)}
+                onClick={() => dispatch(setActiveChannelId(channel.id))}
               >
                 <span className="me-1">#</span>
                 {channel.name}
@@ -39,7 +43,7 @@ const ChannelsToolbar = ({
               type="button"
               variant={buttonVariant}
               className={btnClasses}
-              onClick={() => setActiveChannelId(channel.id)}
+              onClick={() => dispatch(setActiveChannelId(channel.id))}
             >
               <span className="me-1">#</span>
               {channel.name}

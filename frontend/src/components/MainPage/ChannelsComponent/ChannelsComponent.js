@@ -7,7 +7,7 @@ import { useGetChannelsQuery } from '../../../store/index.js';
 import getModal from './Modals/index.js';
 import ChannelsToolbar from './ChannelsToolbar.jsx';
 
-const renderModal = (modalInfo, activeChannelId, setActiveChannelId, closeModal) => {
+const renderModal = (modalInfo, closeModal) => {
   if (!modalInfo.type) {
     return null;
   }
@@ -15,14 +15,12 @@ const renderModal = (modalInfo, activeChannelId, setActiveChannelId, closeModal)
   return (
     <Component
       modalInfo={modalInfo}
-      activeChannelId={activeChannelId}
-      setActiveChannelId={setActiveChannelId}
       closeModal={closeModal}
     />
   );
 };
 
-const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
+const ChannelsComponent = () => {
   const { t } = useTranslation();
   const { data = [], error } = useGetChannelsQuery();
 
@@ -53,11 +51,9 @@ const ChannelsComponent = ({ activeChannelId, setActiveChannelId }) => {
         <ChannelsToolbar
           channels={data}
           openModal={openModal}
-          activeChannelId={activeChannelId}
-          setActiveChannelId={setActiveChannelId}
         />
       </div>
-      {renderModal(modalInfo, activeChannelId, setActiveChannelId, closeModal)}
+      {renderModal(modalInfo, closeModal)}
     </>
   );
 };

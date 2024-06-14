@@ -1,38 +1,37 @@
 import React, {
   useEffect, useRef,
 } from 'react';
+import { useSelector } from 'react-redux';
 import { useFormik } from 'formik';
 import { useTranslation } from 'react-i18next';
 import { Button, Form } from 'react-bootstrap';
 import { toast } from 'react-toastify';
 import { useAddMessageMutation } from '../../../store/index.js';
-import { useData, useStorageGetItem } from '../../../hooks';
+import { useData } from '../../../hooks';
+import { getStorageItem } from '../../../utils/localStorageFunctions.js';
 
-const MessageForm = ({ activeChannelId }) => {
+const MessageForm = () => {
+  const activeChannelId = useSelector((state) => state.activeChannelId.value);
   const { filter } = useData();
   const { t } = useTranslation();
-  const [addMessage, { isLoading, error }] = useAddMessageMutation();
-  const { username } = JSON.parse(useStorageGetItem());
+  const [addMessage, { isLoading }] = useAddMessageMutation();
+  const { username } = JSON.parse(getStorageItem());
 
   const inputRef = useRef();
   useEffect(() => {
     inputRef.current.focus();
   }, [activeChannelId, isLoading]);
 
-  useEffect(() => {
-    if (error) {
-      toast.error(t('messages.errors.send'));
-    }
-  }, [error, t]);
-
   const formik = useFormik({
     initialValues: {
       body: '',
     },
-    onSubmit: async () => {
+    onSubmit: () => {
       const filteredBody = filter.clean(formik.values.body);
-      await addMessage({ body: filteredBody, channelId: activeChannelId, username });
-      formik.resetForm();
+      addMessage({ body: filteredBody, channelId: activeChannelId, username })
+        .unwrap()
+        .then(() => formik.resetForm())
+        .catch(() => toast.error(t('messages.errors.send')));
     },
   });
 

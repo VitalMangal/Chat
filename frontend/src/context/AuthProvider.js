@@ -1,18 +1,18 @@
 import React, { useState, useMemo } from 'react';
 import AuthContext from './AuthContext.js';
-import { useStorageGetItem, useStorageSetItem, useStorageRemoveItem } from '../hooks';
+import { getStorageItem, setStorageItem, removeStorageItem } from '../utils/localStorageFunctions.js';
 
 const AuthProvider = ({ children }) => {
-  const userData = JSON.parse(useStorageGetItem());
+  const userData = JSON.parse(getStorageItem());
   const [loggedIn, setLoggedIn] = useState(userData ? userData.userLoggedIn : false);
 
   const useLogIn = (data) => {
-    useStorageSetItem(data);
+    setStorageItem(data);
     setLoggedIn(true);
   };
 
   const useLogOut = () => {
-    useStorageRemoveItem();
+    removeStorageItem();
     setLoggedIn(false);
   };
 
